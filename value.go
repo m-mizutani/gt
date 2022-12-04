@@ -30,7 +30,7 @@ func (x ValueTest[T]) Nil() ValueTest[T] {
 	x.t.Helper()
 
 	if !EvalIsNil(x.actual) {
-		x.t.Error("not nil")
+		x.t.Error("expected nil, but got not nil")
 	}
 
 	return x
@@ -40,7 +40,7 @@ func (x ValueTest[T]) NotNil() ValueTest[T] {
 	x.t.Helper()
 
 	if EvalIsNil(x.actual) {
-		x.t.Error("nil")
+		x.t.Error("expected not nil, but got nil")
 	}
 
 	return x

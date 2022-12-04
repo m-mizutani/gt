@@ -1,26 +1,34 @@
 package gt_test
 
-import "testing"
+import (
+	"testing"
+)
 
-type errCounter struct {
+type counter struct {
 	testing.TB
 
-	errCount  int
-	failCount int
+	errs  int
+	fails int
 }
 
-func newErrCounter() *errCounter {
-	return &errCounter{}
+func newCounter() *counter {
+	return &counter{}
 }
 
-func (x *errCounter) Helper() {}
+func (x *counter) Helper() {}
 
-func (x *errCounter) Error(args ...any) {
-	if x.failCount == 0 {
-		x.errCount++
+func (x *counter) Error(args ...any) {
+	if x.fails == 0 {
+		x.errs++
 	}
 }
 
-func (x *errCounter) FailNow() {
-	x.failCount++
+func (x *counter) Errorf(fmt string, args ...any) {
+	if x.fails == 0 {
+		x.errs++
+	}
+}
+
+func (x *counter) FailNow() {
+	x.errs++
 }

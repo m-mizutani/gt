@@ -19,7 +19,7 @@ func (x MapTest[K, V]) Equal(expect map[K]V) MapTest[K, V] {
 	x.t.Helper()
 
 	if !EvalCompare(x.actual, expect) {
-		x.t.Error("not equal")
+		x.t.Error("expected equals, but not matched")
 		return x
 	}
 
@@ -30,7 +30,7 @@ func (x MapTest[K, V]) NotEqual(expect map[K]V) MapTest[K, V] {
 	x.t.Helper()
 
 	if EvalCompare(x.actual, expect) {
-		x.t.Error("equal")
+		x.t.Error("expected not equals, but matched")
 		return x
 	}
 
@@ -38,16 +38,20 @@ func (x MapTest[K, V]) NotEqual(expect map[K]V) MapTest[K, V] {
 }
 
 func (x MapTest[K, V]) HasKey(expect K) MapTest[K, V] {
+	x.t.Helper()
+
 	if _, ok := x.actual[expect]; !ok {
-		x.t.Error("does not have key")
+		x.t.Error("expected contain the key, but not got")
 	}
 
 	return x
 }
 
 func (x MapTest[K, V]) NotHaveKey(expect K) MapTest[K, V] {
+	x.t.Helper()
+
 	if _, ok := x.actual[expect]; ok {
-		x.t.Error("has key")
+		x.t.Error("expected not contain the key, but got")
 	}
 
 	return x
@@ -55,22 +59,24 @@ func (x MapTest[K, V]) NotHaveKey(expect K) MapTest[K, V] {
 
 func (x MapTest[K, V]) Contain(expect V) MapTest[K, V] {
 	x.t.Helper()
+
 	for i := range x.actual {
 		if EvalCompare(x.actual[i], expect) {
 			return x
 		}
 	}
 
-	x.t.Error("not contains")
+	x.t.Error("expected contain the value, but not got")
 	return x
 }
 
 func (x MapTest[K, V]) NotContain(expect V) MapTest[K, V] {
 	x.t.Helper()
+
 	for i := range x.actual {
 		if EvalCompare(x.actual[i], expect) {
-			x.t.Error("contains")
-			return x
+			x.t.Error("expected not contain, but got the value")
+			break
 		}
 	}
 
@@ -80,7 +86,7 @@ func (x MapTest[K, V]) NotContain(expect V) MapTest[K, V] {
 func (x MapTest[K, V]) Length(expect int) MapTest[K, V] {
 	x.t.Helper()
 	if len(x.actual) != expect {
-		x.t.Error("not contains")
+		x.t.Error("got non expected length")
 	}
 	return x
 }

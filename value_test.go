@@ -94,14 +94,14 @@ func TestValueEqual(t *testing.T) {
 
 	for title, tc := range testCases {
 		t.Run(title, func(t *testing.T) {
-			cnt := newErrCounter()
+			cnt := newCounter()
 			tc.f(cnt)
 
-			if cnt.errCount != tc.errCount {
-				t.Errorf("error count is not match: expected %d, but actual %d", tc.errCount, cnt.errCount)
+			if cnt.errs != tc.errCount {
+				t.Errorf("error count is not match: expected %d, but actual %d", tc.errCount, cnt.errs)
 			}
-			if cnt.errCount != tc.errCount {
-				t.Errorf("error count is not match: expected %d, but actual %d", tc.errCount, cnt.errCount)
+			if cnt.errs != tc.errCount {
+				t.Errorf("error count is not match: expected %d, but actual %d", tc.errCount, cnt.errs)
 			}
 		})
 	}
@@ -110,80 +110,82 @@ func TestValueEqual(t *testing.T) {
 func TestValueNil(t *testing.T) {
 	testCases := map[string]struct {
 		value any
-		isNil bool
 		isErr bool
 	}{
 		"match nil": {
 			value: nil,
-			isNil: true,
 			isErr: false,
-		},
-		"unmatched not nil": {
-			value: nil,
-			isNil: false,
-			isErr: true,
 		},
 		"string is not Nil": {
 			value: "a",
-			isNil: true,
 			isErr: true,
 		},
 		"int is not Nil": {
 			value: 0,
-			isNil: true,
 			isErr: true,
 		},
 		"float is not Nil": {
 			value: 1.23,
-			isNil: true,
 			isErr: true,
 		},
 		"struct is not Nil": {
 			value: struct{}{},
-			isNil: true,
 			isErr: true,
 		},
 		"struct ptr is not Nil": {
 			value: &struct{}{},
-			isNil: true,
 			isErr: true,
 		},
 		"function is not Nil": {
 			value: func() {},
-			isNil: true,
 			isErr: true,
 		},
 		"chain is not Nil": {
 			value: make(chan bool),
-			isNil: true,
 			isErr: true,
 		},
 		"slice is not Nil": {
 			value: []int{1, 2, 3},
-			isNil: true,
 			isErr: true,
 		},
 		"empty slice is Nil": {
 			value: []int{},
-			isNil: true,
 			isErr: false,
 		},
 	}
 
 	for title, tc := range testCases {
 		t.Run(title, func(t *testing.T) {
-			cnt := newErrCounter()
+			cnt := newCounter()
 
-			v := gt.Value(cnt, tc.value)
+			gt.Value(cnt, tc.value).Nil()
 
-			if tc.isNil {
-				v.Nil()
-			} else {
-				v.NotNil()
+			if (cnt.errs > 0) != tc.isErr {
+				t.Errorf("Expected isErr: %v, but actual: %v (%T)", tc.isErr, cnt.errs, tc.value)
 			}
+		})
+	}
+}
 
-			if (cnt.errCount > 0) != tc.isErr {
-				t.Errorf("Expected isErr: %v, but actual: %v (%T)", tc.isErr, cnt.errCount, tc.value)
+func TestValueNotNil(t *testing.T) {
+	testCases := map[string]struct {
+		value any
+		isErr bool
+	}{
+		"unmatched not nil": {
+			value: nil,
+			isErr: true,
+		},
+	}
+
+	for title, tc := range testCases {
+		t.Run(title, func(t *testing.T) {
+			cnt := newCounter()
+
+			gt.Value(cnt, tc.value).NotNil()
+
+			if (cnt.errs > 0) != tc.isErr {
+				t.Errorf("Expected isErr: %v, but actual: %v (%T)", tc.isErr, cnt.errs, tc.value)
 			}
 		})
 	}
