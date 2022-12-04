@@ -1,0 +1,15 @@
+name: lint
+
+on:
+  push:
+
+jobs:
+  golangci:
+    name: golangci-lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          args: "--build-tags github_test --timeout 5m0s"
