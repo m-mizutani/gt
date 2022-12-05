@@ -20,7 +20,16 @@ func Value[T any](t testing.TB, actual T) ValueTest[T] {
 func (x ValueTest[T]) Equal(expect T) ValueTest[T] {
 	x.t.Helper()
 	if !EvalCompare(x.actual, expect) {
-		x.t.Error("not match")
+		x.t.Error("expected equal, but not matched")
+	}
+
+	return x
+}
+
+func (x ValueTest[T]) NotEqual(expect T) ValueTest[T] {
+	x.t.Helper()
+	if EvalCompare(x.actual, expect) {
+		x.t.Error("expected not equal, but matched")
 	}
 
 	return x
