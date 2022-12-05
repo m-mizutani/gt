@@ -26,10 +26,28 @@ func (x ErrorTest) Passed() ErrorTest {
 	return x
 }
 
+func (x ErrorTest) MustPassed() ErrorTest {
+	x.t.Helper()
+	if x.actual != nil {
+		x.t.Error("expected no error, but got error")
+		x.t.FailNow()
+	}
+	return x
+}
+
 func (x ErrorTest) Failed() ErrorTest {
 	x.t.Helper()
 	if x.actual == nil {
 		x.t.Error("expected error, but got no error")
+	}
+	return x
+}
+
+func (x ErrorTest) MustFailed() ErrorTest {
+	x.t.Helper()
+	if x.actual == nil {
+		x.t.Error("expected error, but got no error")
+		x.t.Failed()
 	}
 	return x
 }
