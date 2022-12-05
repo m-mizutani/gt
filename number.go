@@ -14,9 +14,9 @@ type NumberTest[T number] struct {
 	t      testing.TB
 }
 
-func Number[T number](t testing.TB, actual T) ValueTest[T] {
+func Number[T number](t testing.TB, actual T) NumberTest[T] {
 	t.Helper()
-	return ValueTest[T]{
+	return NumberTest[T]{
 		actual: actual,
 		t:      t,
 	}
