@@ -22,19 +22,27 @@ func Number[T number](t testing.TB, actual T) NumberTest[T] {
 	}
 }
 
+// Equal checks if expect equals given actual value.
+//
+//	n := 2
+//	gt.Number(n).Equal(2)
 func (x NumberTest[T]) Equal(expect T) NumberTest[T] {
 	x.t.Helper()
 	if x.actual != expect {
-		x.t.Error("expected equal, but not matched")
+		x.t.Error("expected equal, but not matched\n" + Diff(expect, x.actual))
 	}
 
 	return x
 }
 
+// NotEqual checks if expect does not equal given actual value.
+//
+//	n := 2
+//	gt.Number(n).NotEqual(1)
 func (x NumberTest[T]) NotEqual(expect T) NumberTest[T] {
 	x.t.Helper()
 	if x.actual == expect {
-		x.t.Error("expected not equal, but matched")
+		x.t.Error("expected not equal, but matched\n" + Diff(expect, x.actual))
 	}
 
 	return x
@@ -55,5 +63,17 @@ func (x NumberTest[T]) LessThan(expect T) NumberTest[T] {
 		x.t.Error("expected less, but not less")
 	}
 
+	return x
+}
+
+// Must check if error has occurred in previous test. If errors in previous test, it immediately stop test by t.Failed().
+//
+//	age := 42
+//	gt.Number(age).LessThan(18).Must() // Test will stop here
+func (x NumberTest[T]) Must() NumberTest[T] {
+	x.t.Helper()
+	if x.t.Failed() {
+		x.t.FailNow()
+	}
 	return x
 }

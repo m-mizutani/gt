@@ -1,34 +1,42 @@
 package gt_test
 
 import (
+	"fmt"
+	"strings"
 	"testing"
 )
 
-type counter struct {
+type recorder struct {
 	testing.TB
 
 	errs  int
 	fails int
+	msgs  []string
 }
 
-func newCounter() *counter {
-	return &counter{}
+func newRecorder() *recorder {
+	return &recorder{}
 }
 
-func (x *counter) Helper() {}
+func (x *recorder) Helper() {}
 
-func (x *counter) Error(args ...any) {
+func (x *recorder) Error(args ...any) {
+	var argv []string
+	for _, arg := range args {
+		argv = append(argv, fmt.Sprintf("%v", arg))
+	}
+	if x.fails == 0 {
+		x.msgs = append(x.msgs, strings.Join(argv, " "))
+		x.errs++
+	}
+}
+
+func (x *recorder) Errorf(fmt string, args ...any) {
 	if x.fails == 0 {
 		x.errs++
 	}
 }
 
-func (x *counter) Errorf(fmt string, args ...any) {
-	if x.fails == 0 {
-		x.errs++
-	}
-}
-
-func (x *counter) FailNow() {
+func (x *recorder) FailNow() {
 	x.errs++
 }

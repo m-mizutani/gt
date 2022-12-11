@@ -8,7 +8,7 @@ import (
 )
 
 func TestArray(t *testing.T) {
-	mock := newCounter()
+	mock := newRecorder()
 
 	d := []int{1, 2, 3}
 	gt.Array(mock, d).Equal([]int{1, 2, 3})

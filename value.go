@@ -17,10 +17,11 @@ func Value[T any](t testing.TB, actual T) ValueTest[T] {
 	}
 }
 
+// Equal compares Value and expect T.
 func (x ValueTest[T]) Equal(expect T) ValueTest[T] {
 	x.t.Helper()
 	if !EvalCompare(x.actual, expect) {
-		x.t.Error("expected equal, but not matched")
+		x.t.Error("expected equal, but not matched\n" + Diff(expect, x.actual))
 	}
 
 	return x
@@ -29,7 +30,7 @@ func (x ValueTest[T]) Equal(expect T) ValueTest[T] {
 func (x ValueTest[T]) NotEqual(expect T) ValueTest[T] {
 	x.t.Helper()
 	if EvalCompare(x.actual, expect) {
-		x.t.Error("expected not equal, but matched")
+		x.t.Error("expected not equal, but matched\n" + Diff(expect, x.actual))
 	}
 
 	return x
@@ -55,7 +56,11 @@ func (x ValueTest[T]) NotNil() ValueTest[T] {
 	return x
 }
 
-func (x ValueTest[T]) Required() ValueTest[T] {
+// Must check if error has occurred in previous test. If errors in previous test, it immediately stop test by t.Failed().
+//
+//	name := "Alice"
+//	gt.Value(name).Equal("Bob").Must() // Test will stop here
+func (x ValueTest[T]) Must() ValueTest[T] {
 	x.t.Helper()
 	if x.t.Failed() {
 		x.t.FailNow()

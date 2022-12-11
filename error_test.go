@@ -9,7 +9,7 @@ import (
 
 func TestError(t *testing.T) {
 	err := errors.New("test")
-	cnt := newCounter()
+	cnt := newRecorder()
 	gt.Error(cnt, err).Failed()
 
 	if cnt.errs > 0 {

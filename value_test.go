@@ -40,11 +40,11 @@ func TestValueEqual(t *testing.T) {
 		"not match struct (ptr)": {
 			f: func(mock testing.TB) {
 				type s struct {
-					a string
+					A string
 					b int
 				}
 
-				gt.Value(mock, &s{a: "x", b: 2}).Equal(&s{a: "x", b: 1})
+				gt.Value(mock, &s{A: "x", b: 2}).Equal(&s{A: "x", b: 1})
 			},
 			errCount: 1,
 		},
@@ -94,7 +94,7 @@ func TestValueEqual(t *testing.T) {
 
 	for title, tc := range testCases {
 		t.Run(title, func(t *testing.T) {
-			cnt := newCounter()
+			cnt := newRecorder()
 			tc.f(cnt)
 
 			if cnt.errs != tc.errCount {
@@ -156,7 +156,7 @@ func TestValueNil(t *testing.T) {
 
 	for title, tc := range testCases {
 		t.Run(title, func(t *testing.T) {
-			cnt := newCounter()
+			cnt := newRecorder()
 
 			gt.Value(cnt, tc.value).Nil()
 
@@ -180,7 +180,7 @@ func TestValueNotNil(t *testing.T) {
 
 	for title, tc := range testCases {
 		t.Run(title, func(t *testing.T) {
-			cnt := newCounter()
+			cnt := newRecorder()
 
 			gt.Value(cnt, tc.value).NotNil()
 

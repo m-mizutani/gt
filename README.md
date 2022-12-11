@@ -42,3 +42,6 @@ gt.Value(t, a1).Equal([]int{1, 2, 3}) // <- OK
 // gt.Value(t, a1).Contain(1) <- NG
 gt.Array(t, a1).Contains(1) // <- OK
 ```
+
+## License
+
