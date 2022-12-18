@@ -20,9 +20,12 @@ func TestArray(t *testing.T) {
 func TestArrayExample1(t *testing.T) {
 	data := []int{1, 2, 3}
 
-	gt.Array(t, data).
-		Contain(1).
-		NotContain(4).
+	gt.A(t, data).
+		Have(1).
+		NotHave(4).
+		Contain([]int{1, 2}).
+		Contain([]int{2, 3}).
+		NotContain([]int{1, 3}).
 		Equal([]int{1, 2, 3}).
 		NotEqual([]int{1, 2, 3, 4}).
 		NotEqual([]int{0, 1, 2}).
@@ -53,17 +56,17 @@ func TestArrayExample2(t *testing.T) {
 	ctx := context.Background()
 
 	unorderedUsers, err := GetUsers(ctx)
-	gt.Error(t, err).Passed()
+	gt.Error(t, err).Pass().Must()
 	gt.Array(t, unorderedUsers).
-		Contain(&user{
+		Have(&user{
 			ID:   1000,
 			Name: "Alice",
 		}).
-		Contain(&user{
+		Have(&user{
 			ID:   1024,
 			Name: "Bob",
 		}).
-		NotContain(&user{
+		NotHave(&user{
 			ID:   9999,
 			Name: "TestUser",
 		}).

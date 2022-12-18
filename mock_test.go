@@ -31,12 +31,17 @@ func (x *recorder) Error(args ...any) {
 	}
 }
 
-func (x *recorder) Errorf(fmt string, args ...any) {
+func (x *recorder) Errorf(format string, args ...any) {
 	if x.fails == 0 {
+		x.msgs = append(x.msgs, fmt.Sprintf(format, args...))
 		x.errs++
 	}
 }
 
 func (x *recorder) FailNow() {
-	x.errs++
+	x.fails++
+}
+
+func (x *recorder) Failed() bool {
+	return x.errs > 0
 }

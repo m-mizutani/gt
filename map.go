@@ -2,20 +2,20 @@ package gt
 
 import "testing"
 
-type MapTest[K comparable, V any] struct {
+type mapTest[K comparable, V any] struct {
 	actual map[K]V
 	t      testing.TB
 }
 
-func Map[K comparable, V any](t testing.TB, actual map[K]V) MapTest[K, V] {
+func Map[K comparable, V any](t testing.TB, actual map[K]V) mapTest[K, V] {
 	t.Helper()
-	return MapTest[K, V]{
+	return mapTest[K, V]{
 		actual: actual,
 		t:      t,
 	}
 }
 
-func (x MapTest[K, V]) Equal(expect map[K]V) MapTest[K, V] {
+func (x mapTest[K, V]) Equal(expect map[K]V) mapTest[K, V] {
 	x.t.Helper()
 
 	if !EvalCompare(x.actual, expect) {
@@ -26,7 +26,7 @@ func (x MapTest[K, V]) Equal(expect map[K]V) MapTest[K, V] {
 	return x
 }
 
-func (x MapTest[K, V]) NotEqual(expect map[K]V) MapTest[K, V] {
+func (x mapTest[K, V]) NotEqual(expect map[K]V) mapTest[K, V] {
 	x.t.Helper()
 
 	if EvalCompare(x.actual, expect) {
@@ -37,7 +37,7 @@ func (x MapTest[K, V]) NotEqual(expect map[K]V) MapTest[K, V] {
 	return x
 }
 
-func (x MapTest[K, V]) HasKey(expect K) MapTest[K, V] {
+func (x mapTest[K, V]) HasKey(expect K) mapTest[K, V] {
 	x.t.Helper()
 
 	if _, ok := x.actual[expect]; !ok {
@@ -47,7 +47,7 @@ func (x MapTest[K, V]) HasKey(expect K) MapTest[K, V] {
 	return x
 }
 
-func (x MapTest[K, V]) NotHaveKey(expect K) MapTest[K, V] {
+func (x mapTest[K, V]) NotHaveKey(expect K) mapTest[K, V] {
 	x.t.Helper()
 
 	if _, ok := x.actual[expect]; ok {
@@ -57,7 +57,7 @@ func (x MapTest[K, V]) NotHaveKey(expect K) MapTest[K, V] {
 	return x
 }
 
-func (x MapTest[K, V]) Contain(expect V) MapTest[K, V] {
+func (x mapTest[K, V]) Contain(expect V) mapTest[K, V] {
 	x.t.Helper()
 
 	for i := range x.actual {
@@ -70,7 +70,7 @@ func (x MapTest[K, V]) Contain(expect V) MapTest[K, V] {
 	return x
 }
 
-func (x MapTest[K, V]) NotContain(expect V) MapTest[K, V] {
+func (x mapTest[K, V]) NotContain(expect V) mapTest[K, V] {
 	x.t.Helper()
 
 	for i := range x.actual {
@@ -83,7 +83,7 @@ func (x MapTest[K, V]) NotContain(expect V) MapTest[K, V] {
 	return x
 }
 
-func (x MapTest[K, V]) Length(expect int) MapTest[K, V] {
+func (x mapTest[K, V]) Length(expect int) mapTest[K, V] {
 	x.t.Helper()
 	if len(x.actual) != expect {
 		x.t.Error("got non expected length")
@@ -92,10 +92,7 @@ func (x MapTest[K, V]) Length(expect int) MapTest[K, V] {
 }
 
 // Must check if error has occurred in previous test. If errors in previous test, it immediately stop test by t.Failed().
-//
-//	m := map[string]int{"blue": 5}
-//	gt.Map(m).HasKey("orange").Must() // Test will stop here
-func (x MapTest[K, V]) Must() MapTest[K, V] {
+func (x mapTest[K, V]) Must() mapTest[K, V] {
 	x.t.Helper()
 	if x.t.Failed() {
 		x.t.FailNow()

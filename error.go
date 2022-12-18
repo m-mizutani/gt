@@ -5,56 +5,70 @@ import (
 	"testing"
 )
 
-type ErrorTest struct {
+type errorTest struct {
 	t      testing.TB
 	actual error
 }
 
-func Error(t testing.TB, actual error) ErrorTest {
+// Value provides errorTest that is specialized for error testing
+func Error(t testing.TB, actual error) errorTest {
 	t.Helper()
-	return ErrorTest{
+	return errorTest{
 		t:      t,
 		actual: actual,
 	}
 }
 
-func (x ErrorTest) Passed() ErrorTest {
+// Pass checks if error is nil
+func (x errorTest) Pass() errorTest {
 	x.t.Helper()
 	if x.actual != nil {
-		x.t.Error("expected no error, but got error")
+		x.t.Errorf("expected no error, but got error: %v", x.actual)
 	}
 	return x
 }
 
-func (x ErrorTest) MustPassed() ErrorTest {
+// Fail checks if error is not nil
+func (x errorTest) Fail() errorTest {
 	x.t.Helper()
-	if x.actual != nil {
-		x.t.Error("expected no error, but got error")
+	if x.actual == nil {
+		x.t.Error("expected error, but no error")
+	}
+	return x
+}
+
+// Must checks if error has occurred in previous test. If errors in previous test, it immediately stop test by t.FailNow().
+func (x errorTest) Must() errorTest {
+	x.t.Helper()
+	if x.t.Failed() {
 		x.t.FailNow()
 	}
 	return x
 }
 
-func (x ErrorTest) Failed() ErrorTest {
-	x.t.Helper()
-	if x.actual == nil {
-		x.t.Error("expected error, but got no error")
-	}
-	return x
-}
-
-func (x ErrorTest) MustFailed() ErrorTest {
-	x.t.Helper()
-	if x.actual == nil {
-		x.t.Error("expected error, but got no error")
-		x.t.Failed()
-	}
-	return x
-}
-
-func (x ErrorTest) Is(expected error) {
+// Is checks error object equality by errors.Is() function.
+func (x errorTest) Is(expected error) {
 	x.t.Helper()
 	if !errors.Is(x.actual, expected) {
-		x.t.Errorf("expected %T, but got %T", x.actual, expected)
+		x.t.Errorf("expected %T, but not got from %T", expected, x.actual)
+	}
+}
+
+// IsNot checks error object not-equality by errors.Is() function.
+func (x errorTest) IsNot(expected error) {
+	x.t.Helper()
+	if errors.Is(x.actual, expected) {
+		x.t.Errorf("not expected %T, but got from %T", expected, x.actual)
+	}
+}
+
+// ErrorAs checks error type by errors.As() function. If type check passed, callback will be invoked and given extracted error by errors.As.
+func ErrorAs[T any](t testing.TB, actual error, callback func(expect *T)) {
+	t.Helper()
+	tgt := new(T)
+	if errors.As(actual, tgt) {
+		callback(tgt)
+	} else {
+		t.Errorf("expected %T, but got %T", tgt, actual)
 	}
 }

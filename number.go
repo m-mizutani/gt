@@ -1,6 +1,8 @@
 package gt
 
-import "testing"
+import (
+	"testing"
+)
 
 type number interface {
 	int | uint |
@@ -9,24 +11,31 @@ type number interface {
 		float32 | float64
 }
 
-type NumberTest[T number] struct {
+type numberTest[T number] struct {
 	actual T
 	t      testing.TB
 }
 
-func Number[T number](t testing.TB, actual T) NumberTest[T] {
+// Number provides numberTest that has not only Value test methods but also large-small comparison methods
+func Number[T number](t testing.TB, actual T) numberTest[T] {
 	t.Helper()
-	return NumberTest[T]{
+	return numberTest[T]{
 		actual: actual,
 		t:      t,
 	}
 }
 
+// N is sugar syntax of Number
+func N[T number](t testing.TB, actual T) numberTest[T] {
+	t.Helper()
+	return Number(t, actual)
+}
+
 // Equal checks if expect equals given actual value.
 //
 //	n := 2
-//	gt.Number(n).Equal(2)
-func (x NumberTest[T]) Equal(expect T) NumberTest[T] {
+//	gt.Number(t, n).Equal(2)
+func (x numberTest[T]) Equal(expect T) numberTest[T] {
 	x.t.Helper()
 	if x.actual != expect {
 		x.t.Error("expected equal, but not matched\n" + Diff(expect, x.actual))
@@ -37,9 +46,10 @@ func (x NumberTest[T]) Equal(expect T) NumberTest[T] {
 
 // NotEqual checks if expect does not equal given actual value.
 //
-//	n := 2
-//	gt.Number(n).NotEqual(1)
-func (x NumberTest[T]) NotEqual(expect T) NumberTest[T] {
+//	n := 5
+//	gt.Number(t, n).NotEqual(1) // Pass
+//	gt.number(t, n).Equal(5)    // Fail
+func (x numberTest[T]) NotEqual(expect T) numberTest[T] {
 	x.t.Helper()
 	if x.actual == expect {
 		x.t.Error("expected not equal, but matched\n" + Diff(expect, x.actual))
@@ -48,29 +58,66 @@ func (x NumberTest[T]) NotEqual(expect T) NumberTest[T] {
 	return x
 }
 
-func (x NumberTest[T]) GreaterThan(expect T) NumberTest[T] {
+// Greater checks if actual value is greater than expect
+//
+//	n := 5
+//	gt.Number(t, n).Greater(3) // Pass
+//	gt.Number(t, n).Greater(5) // Fail
+func (x numberTest[T]) Greater(expect T) numberTest[T] {
 	x.t.Helper()
 	if !(expect < x.actual) {
-		x.t.Error("expected greater, but not greater")
+		x.t.Errorf("expected greater than %v, but actual %v", expect, x.actual)
 	}
 
 	return x
 }
 
-func (x NumberTest[T]) LessThan(expect T) NumberTest[T] {
+// GreaterOrEqual checks if actual value is expect or greater
+//
+//	n := 5
+//	gt.Number(t, n).GreaterOrEqual(3) // Pass
+//	gt.Number(t, n).GreaterOrEqual(5) // Pass
+//	gt.Number(t, n).GreaterOrEqual(6) // Fail
+func (x numberTest[T]) GreaterOrEqual(expect T) numberTest[T] {
+	x.t.Helper()
+	if !(expect <= x.actual) {
+		x.t.Errorf("expected greater or equal %v, but actual %v", expect, x.actual)
+	}
+
+	return x
+}
+
+// Less checks if actual value is less than expect
+//
+//	n := 5
+//	gt.Number(t, n).Less(6) // Pass
+//	gt.Number(t, n).Less(5) // Fail
+func (x numberTest[T]) Less(expect T) numberTest[T] {
 	x.t.Helper()
 	if !(x.actual < expect) {
-		x.t.Error("expected less, but not less")
+		x.t.Errorf("expected less than %v, but actual %v", expect, x.actual)
 	}
 
 	return x
 }
 
-// Must check if error has occurred in previous test. If errors in previous test, it immediately stop test by t.Failed().
+// LessOrEqual checks if actual value is expect or Less
 //
-//	age := 42
-//	gt.Number(age).LessThan(18).Must() // Test will stop here
-func (x NumberTest[T]) Must() NumberTest[T] {
+//	n := 5
+//	gt.Number(t, n).LessOrEqual(6) // Pass
+//	gt.Number(t, n).LessOrEqual(5) // Pass
+//	gt.Number(t, n).LessOrEqual(3) // Fail
+func (x numberTest[T]) LessOrEqual(expect T) numberTest[T] {
+	x.t.Helper()
+	if !(x.actual <= expect) {
+		x.t.Errorf("expected less or equal %v, but actual %v", expect, x.actual)
+	}
+
+	return x
+}
+
+// Must check if error has occurred in previous test. If errors in previous test, it immediately stop test by t.FailNow().
+func (x numberTest[T]) Must() numberTest[T] {
 	x.t.Helper()
 	if x.t.Failed() {
 		x.t.FailNow()

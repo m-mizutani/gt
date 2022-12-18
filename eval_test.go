@@ -35,12 +35,13 @@ func ExampleMapTest_nil() {
 	fmt.Println(t.msgs[0])
 }
 
+// nolint
 func ExampleValueTest_nil() {
 	t := newRecorder()
 
 	a := "test"
 
-	gt.Value(t, &a).Equal(nil)
+	gt.Value(t, &a).Nil()
 
 	fmt.Println(t.msgs[0])
 }
