@@ -57,3 +57,4 @@ gt.Value(u1).Equal(user{Name:"blue"}) // <- OK
 
 ## License
 
+Apache License 2.0
