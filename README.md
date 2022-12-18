@@ -36,11 +36,23 @@ On the other hand, Go started to provide [Generics](https://go.dev/doc/tutorial/
 
 In many cases, a developer does not care Go generics in using `gt`. However, a developer need to specify generic type (`Value`, `Array`, `Map`, `Error`, etc.) explicitly to use specific test functions for each types.
 
+### Array case
 ```go
 a1 := []int{1, 2, 3}
 gt.Value(t, a1).Equal([]int{1, 2, 3}) // <- OK
-// gt.Value(t, a1).Contain(1) <- NG
+// gt.Value(t, a1).Contain(1) <- Compile error
 gt.Array(t, a1).Contains(1) // <- OK
+```
+
+### Struct case
+```go
+type user struct {
+    Name string
+}
+u1 := user{Name: "blue"}
+
+gt.Value(u1).Equal(user{Name:"blue"}) // <- OK
+// gt.Value(u1).Equal(&user{Name:"blue"}) // <- Compile error
 ```
 
 ## License

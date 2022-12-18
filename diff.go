@@ -8,17 +8,6 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-func toComparable(v any) any {
-	switch reflect.ValueOf(v).Kind() {
-	case reflect.Pointer, reflect.UnsafePointer:
-		if p := reflect.ValueOf(v); !p.IsNil() {
-			return p.Elem().Interface()
-		}
-	}
-
-	return v
-}
-
 func Diff(expect, actual any) string {
 	switch reflect.ValueOf(actual).Kind() {
 	case reflect.Pointer, reflect.UnsafePointer,
