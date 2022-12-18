@@ -152,11 +152,9 @@ func (x arrayTest[T]) Length(expect int) arrayTest[T] {
 	return x
 }
 
-// Must check if error has occurred in previous test. If errors in previous test, it immediately stop test by t.FailNow().
+// Must check if error has occurred in previous test. If errors will occur in following test, it immediately stop test by t.FailNow().
 func (x arrayTest[T]) Must() arrayTest[T] {
 	x.t.Helper()
-	if x.t.Failed() {
-		x.t.FailNow()
-	}
+	x.t = newErrorWithFail(x.t)
 	return x
 }
