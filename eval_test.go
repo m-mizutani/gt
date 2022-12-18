@@ -6,7 +6,7 @@ import (
 	"github.com/m-mizutani/gt"
 )
 
-func ExampleMapTest() {
+func ExampleMap() {
 	t := newRecorder()
 
 	type user struct {
@@ -21,7 +21,7 @@ func ExampleMapTest() {
 	fmt.Println(t.msgs[0])
 }
 
-func ExampleMapTest_nil() {
+func ExampleMap_nil() {
 	t := newRecorder()
 
 	type user struct {
@@ -36,7 +36,7 @@ func ExampleMapTest_nil() {
 }
 
 // nolint
-func ExampleValueTest_nil() {
+func ExampleValue_nil() {
 	t := newRecorder()
 
 	a := "test"
@@ -46,7 +46,7 @@ func ExampleValueTest_nil() {
 	fmt.Println(t.msgs[0])
 }
 
-func ExampleArrayTest() {
+func ExampleArray() {
 	t := newRecorder()
 
 	a := []int{2, 3, 4}
