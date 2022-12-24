@@ -5,22 +5,22 @@ import (
 	"testing"
 )
 
-type errorTest struct {
+type ErrorTest struct {
 	t      testing.TB
 	actual error
 }
 
-// Value provides errorTest that is specialized for error testing
-func Error(t testing.TB, actual error) errorTest {
+// Value provides ErrorTest that is specialized for error testing
+func Error(t testing.TB, actual error) ErrorTest {
 	t.Helper()
-	return errorTest{
+	return ErrorTest{
 		t:      t,
 		actual: actual,
 	}
 }
 
 // Pass checks if error is nil
-func (x errorTest) Pass() errorTest {
+func (x ErrorTest) Pass() ErrorTest {
 	x.t.Helper()
 	if x.actual != nil {
 		x.t.Errorf("expected no error, but got error: %v", x.actual)
@@ -29,7 +29,7 @@ func (x errorTest) Pass() errorTest {
 }
 
 // Fail checks if error is not nil
-func (x errorTest) Fail() errorTest {
+func (x ErrorTest) Fail() ErrorTest {
 	x.t.Helper()
 	if x.actual == nil {
 		x.t.Error("expected error, but no error")
@@ -38,14 +38,14 @@ func (x errorTest) Fail() errorTest {
 }
 
 // Must checks if error has occurred in previous test. If errors will occur in following test, it immediately stop test by t.FailNow().
-func (x errorTest) Must() errorTest {
+func (x ErrorTest) Must() ErrorTest {
 	x.t.Helper()
 	x.t = newErrorWithFail(x.t)
 	return x
 }
 
 // Is checks error object equality by errors.Is() function.
-func (x errorTest) Is(expected error) {
+func (x ErrorTest) Is(expected error) {
 	x.t.Helper()
 	if !errors.Is(x.actual, expected) {
 		x.t.Errorf("expected %T, but not got from %T", expected, x.actual)
@@ -53,7 +53,7 @@ func (x errorTest) Is(expected error) {
 }
 
 // IsNot checks error object not-equality by errors.Is() function.
-func (x errorTest) IsNot(expected error) {
+func (x ErrorTest) IsNot(expected error) {
 	x.t.Helper()
 	if errors.Is(x.actual, expected) {
 		x.t.Errorf("not expected %T, but got from %T", expected, x.actual)

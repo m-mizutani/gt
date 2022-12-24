@@ -2,22 +2,22 @@ package gt
 
 import "testing"
 
-type arrayTest[T any] struct {
+type ArrayTest[T any] struct {
 	actual []T
 	t      testing.TB
 }
 
-// Array provides arrayTest that has not only Value test methods but also array (slice) comparison methods
-func Array[T comparable](t testing.TB, actual []T) arrayTest[T] {
+// Array provides ArrayTest that has not only Value test methods but also array (slice) comparison methods
+func Array[T comparable](t testing.TB, actual []T) ArrayTest[T] {
 	t.Helper()
-	return arrayTest[T]{
+	return ArrayTest[T]{
 		actual: actual,
 		t:      t,
 	}
 }
 
 // A is sugar syntax of Array
-func A[T comparable](t testing.TB, actual []T) arrayTest[T] {
+func A[T comparable](t testing.TB, actual []T) ArrayTest[T] {
 	t.Helper()
 	return Array(t, actual)
 }
@@ -27,7 +27,7 @@ func A[T comparable](t testing.TB, actual []T) arrayTest[T] {
 //	v := []int{1, 2, 3, 5}
 //	gt.Array(t, v).Equal([]int{1, 2, 3, 5}) // Pass
 //	gt.Array(t, v).Equal([]int{1, 2, 3, 4}) // Fail
-func (x arrayTest[T]) Equal(expect []T) arrayTest[T] {
+func (x ArrayTest[T]) Equal(expect []T) ArrayTest[T] {
 	x.t.Helper()
 
 	if !EvalCompare(x.actual, expect) {
@@ -43,7 +43,7 @@ func (x arrayTest[T]) Equal(expect []T) arrayTest[T] {
 //	v := []int{1, 2, 3, 5}
 //	gt.Array(t, v).NotEqual([]int{1, 2, 3, 5}) // Fail
 //	gt.Array(t, v).NotEqual([]int{1, 2, 3, 4}) // Pass
-func (x arrayTest[T]) NotEqual(expect []T) arrayTest[T] {
+func (x ArrayTest[T]) NotEqual(expect []T) ArrayTest[T] {
 	x.t.Helper()
 
 	if EvalCompare(x.actual, expect) {
@@ -54,7 +54,7 @@ func (x arrayTest[T]) NotEqual(expect []T) arrayTest[T] {
 	return x
 }
 
-func (x arrayTest[T]) have(expect T) bool {
+func (x ArrayTest[T]) have(expect T) bool {
 	x.t.Helper()
 
 	for i := range x.actual {
@@ -71,7 +71,7 @@ func (x arrayTest[T]) have(expect T) bool {
 //	v := []int{1, 2, 3, 5}
 //	gt.Array(t, v).Have(5)) // Pass
 //	gt.Array(t, v).Have(4)) // Fail
-func (x arrayTest[T]) Have(expect T) arrayTest[T] {
+func (x ArrayTest[T]) Have(expect T) ArrayTest[T] {
 	x.t.Helper()
 	if !x.have(expect) {
 		x.t.Errorf("%v expects to have %v, but not contains", x.actual, expect)
@@ -84,7 +84,7 @@ func (x arrayTest[T]) Have(expect T) arrayTest[T] {
 //	v := []int{1, 2, 3, 5}
 //	gt.Array(t, v).Have(5)) // Fail
 //	gt.Array(t, v).Have(4)) // Pass
-func (x arrayTest[T]) NotHave(expect T) arrayTest[T] {
+func (x ArrayTest[T]) NotHave(expect T) ArrayTest[T] {
 	x.t.Helper()
 	if x.have(expect) {
 		x.t.Errorf("%v does not expects to have %v, but contains", x.actual, expect)
@@ -92,7 +92,7 @@ func (x arrayTest[T]) NotHave(expect T) arrayTest[T] {
 	return x
 }
 
-func (x arrayTest[T]) contain(expect []T) bool {
+func (x ArrayTest[T]) contain(expect []T) bool {
 	x.t.Helper()
 
 	check := func(i int) bool {
@@ -119,7 +119,7 @@ func (x arrayTest[T]) contain(expect []T) bool {
 //	v := []int{1, 2, 3, 5}
 //	gt.Array(t, v).Contain([]int{1, 2, 3})) // Pass
 //	gt.Array(t, v).Contain([]int{1, 2, 5})) // Fail
-func (x arrayTest[T]) Contain(expect []T) arrayTest[T] {
+func (x ArrayTest[T]) Contain(expect []T) ArrayTest[T] {
 	x.t.Helper()
 	if !x.contain(expect) {
 		x.t.Errorf("%v expects to have %v, but not contains", x.actual, expect)
@@ -132,7 +132,7 @@ func (x arrayTest[T]) Contain(expect []T) arrayTest[T] {
 //	v := []int{1, 2, 3, 5}
 //	gt.Array(t, v).NotContain([]int{1, 2, 3})) // Fail
 //	gt.Array(t, v).NotContain([]int{1, 2, 5})) // Pass
-func (x arrayTest[T]) NotContain(expect []T) arrayTest[T] {
+func (x ArrayTest[T]) NotContain(expect []T) ArrayTest[T] {
 	x.t.Helper()
 	if x.contain(expect) {
 		x.t.Errorf("%v expects to have %v, but not contains", x.actual, expect)
@@ -144,7 +144,7 @@ func (x arrayTest[T]) NotContain(expect []T) arrayTest[T] {
 //
 //	v := []int{1, 2, 3, 5}
 //	gt.Array(t, v).Length(4) // Pass
-func (x arrayTest[T]) Length(expect int) arrayTest[T] {
+func (x ArrayTest[T]) Length(expect int) ArrayTest[T] {
 	x.t.Helper()
 	if len(x.actual) != expect {
 		x.t.Error("not contains")
@@ -153,7 +153,7 @@ func (x arrayTest[T]) Length(expect int) arrayTest[T] {
 }
 
 // Must check if error has occurred in previous test. If errors will occur in following test, it immediately stop test by t.FailNow().
-func (x arrayTest[T]) Must() arrayTest[T] {
+func (x ArrayTest[T]) Must() ArrayTest[T] {
 	x.t.Helper()
 	x.t = newErrorWithFail(x.t)
 	return x
