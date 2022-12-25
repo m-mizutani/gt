@@ -14,6 +14,10 @@ func Bool(t *testing.T, actual bool) BoolTest {
 	}
 }
 
+func B(t *testing.T, actual bool) BoolTest {
+	return Bool(t, actual)
+}
+
 func (x BoolTest) True() BoolTest {
 	if !x.actual {
 		x.t.Error("expected true, but false")
