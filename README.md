@@ -107,14 +107,14 @@ gt.Map(t, colorMap).Must().HaveKey("orange") // Fail and stop test
 type user struct {
     Name string
 }
-var origin any = &user{
+var v any = &user{
     Name: "blue",
 }
 
-u1 := gt.Cast[user](t, origin).NotNil()  // Fail (because origin is *user, not user)
-gt.Cast[*user](t, origin).Nil()          // Fail (because origin is not nil)
+u1 := gt.Cast[user](t, v).NotNil()  // Fail (because v is *user, not user)
+gt.Cast[*user](t, v).Nil()          // Fail (because v is not nil)
 
-u2 := gt.Cast[*user](t, origin).NotNil() // Pass
+u2 := gt.Cast[*user](t, v).NotNil() // Pass
 gt.Value(t, u2.Name).Equal("blue")       // Pass
 ```
 
