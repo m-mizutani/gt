@@ -20,7 +20,7 @@ colors := ["red", "blue"]
 // gt.Array(t, colors).Equal([]int{1, 2}) // <- Compile error
 
 gt.Array(t, colors).Equal([]string{"red", "blue"}) // <- Pass
-gt.Array(t, colors).Have([]string{"orange"})       // <- Fail
+gt.Array(t, colors).Have("orange")                 // <- Fail
 ```
 
 ## Motivation
