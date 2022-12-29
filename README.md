@@ -5,16 +5,17 @@
 ```go
 color := "blue"
 
-gt.Value(t, color).Equal(5)        // <- Compile error
-gt.Value(t, color).Equal("orange") // <- Fail
+// gt.Value(t, color).Equal(5)        // <- Compile error
+// gt.Value(t, color).Equal("orange") // <- Fail
+
 gt.Value(t, color).Equal("blue")   // <- Pass
 ```
 
 ```go
 colors := ["red", "blue"]
 
-gt.Array(t, colors).Equal("red")       // <- Compile error
-gt.Array(t, colors).Equal([]int{1, 2}) // <- Compile error
+// gt.Array(t, colors).Equal("red")       // <- Compile error
+// gt.Array(t, colors).Equal([]int{1, 2}) // <- Compile error
 
 gt.Array(t, colors).Equal([]string{"red", "blue"}) // <- Pass
 gt.Array(t, colors).Have([]string{"orange"})       // <- Fail
