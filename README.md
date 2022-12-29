@@ -1,13 +1,15 @@
-# gt: Generics based Test library for Go [![Go Reference](https://pkg.go.dev/badge/github.com/m-mizutani/gt.svg)](https://pkg.go.dev/github.com/m-mizutani/gt) [![test](https://github.com/m-mizutani/gt/actions/workflows/test.yml/badge.svg)](https://github.com/m-mizutani/gt/actions/workflows/test.yml) [![gosec](https://github.com/m-mizutani/gt/actions/workflows/gosec.yml/badge.svg)](https://github.com/m-mizutani/gt/actions/workflows/gosec.yml) [![lint](https://github.com/m-mizutani/gt/actions/workflows/lint.yml/badge.svg)](https://github.com/m-mizutani/gt/actions/workflows/lint.yml)
+# gt: Generics based Test library for Go
+
+[![Go Reference](https://pkg.go.dev/badge/github.com/m-mizutani/gt.svg)](https://pkg.go.dev/github.com/m-mizutani/gt) [![test](https://github.com/m-mizutani/gt/actions/workflows/test.yml/badge.svg)](https://github.com/m-mizutani/gt/actions/workflows/test.yml) [![gosec](https://github.com/m-mizutani/gt/actions/workflows/gosec.yml/badge.svg)](https://github.com/m-mizutani/gt/actions/workflows/gosec.yml) [![lint](https://github.com/m-mizutani/gt/actions/workflows/lint.yml/badge.svg)](https://github.com/m-mizutani/gt/actions/workflows/lint.yml)
 
 `gt` is test library leveraging Go generics to check variable type in IDE and compiler.
 
 ```go
 color := "blue"
 
-// gt.Value(t, color).Equal(5)        // <- Compile error
-// gt.Value(t, color).Equal("orange") // <- Fail
+// gt.Value(t, color).Equal(5) // <- Compile error
 
+gt.Value(t, color).Equal("orange") // <- Fail
 gt.Value(t, color).Equal("blue")   // <- Pass
 ```
 
