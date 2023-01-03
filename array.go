@@ -147,7 +147,33 @@ func (x ArrayTest[T]) NotContain(expect []T) ArrayTest[T] {
 func (x ArrayTest[T]) Length(expect int) ArrayTest[T] {
 	x.t.Helper()
 	if len(x.actual) != expect {
-		x.t.Error("not contains")
+		x.t.Errorf("array length is expected to be %d, but actual is %d", expect, len(x.actual))
+	}
+	return x
+}
+
+// Longer checks if array length is longer than expect.
+//
+//	v := []int{1, 2, 3, 5}
+//	gt.Array(t, v).Longer(3) // Pass
+//	gt.Array(t, v).Longer(4) // Fail
+func (x ArrayTest[T]) Longer(expect int) ArrayTest[T] {
+	x.t.Helper()
+	if !(expect < len(x.actual)) {
+		x.t.Errorf("array length is expected to be longer than %d, but actual is %d", expect, len(x.actual))
+	}
+	return x
+}
+
+// Shorter checks if array length is shorter than expect.
+//
+//	v := []int{1, 2, 3, 5}
+//	gt.Array(t, v).Shorter(5) // Pass
+//	gt.Array(t, v).Shorter(4) // Fail
+func (x ArrayTest[T]) Shorter(expect int) ArrayTest[T] {
+	x.t.Helper()
+	if !(len(x.actual) < expect) {
+		x.t.Errorf("array length is expected to be shorter than %d, but actual is %d", expect, len(x.actual))
 	}
 	return x
 }

@@ -29,7 +29,7 @@ func TestArrayExample1(t *testing.T) {
 		Equal([]int{1, 2, 3}).
 		NotEqual([]int{1, 2, 3, 4}).
 		NotEqual([]int{0, 1, 2}).
-		Length(3)
+		Length(3).Longer(2).Shorter(4)
 }
 
 func TestArrayExample2(t *testing.T) {

@@ -214,3 +214,10 @@ func TestValueMust_not_called(t *testing.T) {
 		t.Errorf("FailNow should be called once: %d times", r.fails)
 	}
 }
+
+func TestValueCustomType(t *testing.T) {
+	type customType string
+	var p customType = "xxx"
+	r := newRecorder()
+	gt.Value(r, p).Equal("xxx")
+}
