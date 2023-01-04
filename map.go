@@ -43,7 +43,7 @@ func (x MapTest[K, V]) Equal(expect map[K]V) MapTest[K, V] {
 	x.t.Helper()
 
 	if !EvalCompare(x.actual, expect) {
-		x.t.Error("expected equals, but not matched")
+		x.t.Error("maps are not matched\n" + Diff(expect, x.actual))
 		return x
 	}
 
@@ -66,7 +66,7 @@ func (x MapTest[K, V]) NotEqual(expect map[K]V) MapTest[K, V] {
 	x.t.Helper()
 
 	if EvalCompare(x.actual, expect) {
-		x.t.Error("expected not equals, but matched")
+		x.t.Errorf("maps should not be matched, %v", x.actual)
 		return x
 	}
 

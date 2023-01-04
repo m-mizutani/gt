@@ -1,6 +1,7 @@
 package gt_test
 
 import (
+	"os"
 	"testing"
 
 	"github.com/m-mizutani/gt"
@@ -220,4 +221,27 @@ func TestValueCustomType(t *testing.T) {
 	var p customType = "xxx"
 	r := newRecorder()
 	gt.Value(r, p).Equal("xxx")
+}
+
+func TestFailure(t *testing.T) {
+
+	t.Run("struct", func(t *testing.T) {
+		if _, ok := os.LookupEnv("GT_SHOW_TEST_FAIL"); !ok {
+			t.Skip("GT_SHOW_TEST_FAIL is not set")
+		}
+
+		type User struct {
+			ID   string
+			Name string
+		}
+		u1 := &User{
+			ID:   "123",
+			Name: "blue",
+		}
+
+		gt.Value(t, u1).Equal(&User{
+			ID:   "123",
+			Name: "orange",
+		})
+	})
 }

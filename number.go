@@ -38,7 +38,7 @@ func N[T number](t testing.TB, actual T) NumberTest[T] {
 func (x NumberTest[T]) Equal(expect T) NumberTest[T] {
 	x.t.Helper()
 	if x.actual != expect {
-		x.t.Error("expected equal, but not matched\n" + Diff(expect, x.actual))
+		x.t.Error("values are not matched\n" + Diff(expect, x.actual))
 	}
 
 	return x

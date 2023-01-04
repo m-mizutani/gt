@@ -31,7 +31,7 @@ func (x ArrayTest[T]) Equal(expect []T) ArrayTest[T] {
 	x.t.Helper()
 
 	if !EvalCompare(x.actual, expect) {
-		x.t.Error("not equal")
+		x.t.Errorf("arrays are not matched\n" + Diff(x.actual, expect))
 		return x
 	}
 
@@ -47,7 +47,7 @@ func (x ArrayTest[T]) NotEqual(expect []T) ArrayTest[T] {
 	x.t.Helper()
 
 	if EvalCompare(x.actual, expect) {
-		x.t.Error("equal")
+		x.t.Errorf("arrays should not be matched, %v", x.actual)
 		return x
 	}
 
