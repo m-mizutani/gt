@@ -224,12 +224,11 @@ func TestValueCustomType(t *testing.T) {
 }
 
 func TestFailure(t *testing.T) {
+	if _, ok := os.LookupEnv("GT_SHOW_TEST_FAIL"); !ok {
+		t.Skip("GT_SHOW_TEST_FAIL is not set")
+	}
 
 	t.Run("struct", func(t *testing.T) {
-		if _, ok := os.LookupEnv("GT_SHOW_TEST_FAIL"); !ok {
-			t.Skip("GT_SHOW_TEST_FAIL is not set")
-		}
-
 		type User struct {
 			ID   string
 			Name string
@@ -243,5 +242,11 @@ func TestFailure(t *testing.T) {
 			ID:   "123",
 			Name: "orange",
 		})
+	})
+
+	t.Run("number", func(t *testing.T) {
+		v := 10
+
+		gt.Number(t, v).Greater(12)
 	})
 }

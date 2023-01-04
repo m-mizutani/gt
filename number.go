@@ -38,7 +38,7 @@ func N[T number](t testing.TB, actual T) NumberTest[T] {
 func (x NumberTest[T]) Equal(expect T) NumberTest[T] {
 	x.t.Helper()
 	if x.actual != expect {
-		x.t.Error("values are not matched\n" + Diff(expect, x.actual))
+		x.t.Error("numbers are not matched\n" + Diff(expect, x.actual))
 	}
 
 	return x
@@ -52,7 +52,7 @@ func (x NumberTest[T]) Equal(expect T) NumberTest[T] {
 func (x NumberTest[T]) NotEqual(expect T) NumberTest[T] {
 	x.t.Helper()
 	if x.actual == expect {
-		x.t.Error("expected not equal, but matched\n" + Diff(expect, x.actual))
+		x.t.Errorf("numbers should not be matched, %v", x.actual)
 	}
 
 	return x
@@ -66,7 +66,7 @@ func (x NumberTest[T]) NotEqual(expect T) NumberTest[T] {
 func (x NumberTest[T]) Greater(expect T) NumberTest[T] {
 	x.t.Helper()
 	if !(expect < x.actual) {
-		x.t.Errorf("expected greater than %v, but actual %v", expect, x.actual)
+		x.t.Errorf("got %v, want grater than %v", x.actual, expect)
 	}
 
 	return x
@@ -81,7 +81,7 @@ func (x NumberTest[T]) Greater(expect T) NumberTest[T] {
 func (x NumberTest[T]) GreaterOrEqual(expect T) NumberTest[T] {
 	x.t.Helper()
 	if !(expect <= x.actual) {
-		x.t.Errorf("expected greater or equal %v, but actual %v", expect, x.actual)
+		x.t.Errorf("got %v, want greater than or equal %v", x.actual, expect)
 	}
 
 	return x
@@ -95,7 +95,7 @@ func (x NumberTest[T]) GreaterOrEqual(expect T) NumberTest[T] {
 func (x NumberTest[T]) Less(expect T) NumberTest[T] {
 	x.t.Helper()
 	if !(x.actual < expect) {
-		x.t.Errorf("expected less than %v, but actual %v", expect, x.actual)
+		x.t.Errorf("got %v, want less than %v", x.actual, expect)
 	}
 
 	return x
@@ -110,7 +110,7 @@ func (x NumberTest[T]) Less(expect T) NumberTest[T] {
 func (x NumberTest[T]) LessOrEqual(expect T) NumberTest[T] {
 	x.t.Helper()
 	if !(x.actual <= expect) {
-		x.t.Errorf("expected less or equal %v, but actual %v", expect, x.actual)
+		x.t.Errorf("got %v, want less than or equal %v", x.actual, expect)
 	}
 
 	return x
