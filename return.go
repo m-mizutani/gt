@@ -34,14 +34,14 @@ func (x Return1Test[T1]) Error(t testing.TB) ErrorTest {
 	return Error(t, x.err)
 }
 
-// NoError check if the function returned no error. If error is not nil, it will fail. If error is nil, it provides ValueTest for 1st returned value.
-func (x Return1Test[T1]) NoError(t testing.TB) ValueTest[T1] {
+// NoError check if the function returned no error. If error is not nil, it will fail. If error is nil, it provides 1st returned value.
+func (x Return1Test[T1]) NoError(t testing.TB) T1 {
 	t.Helper()
 	if x.err != nil {
 		t.Errorf("got errored, but should not get error")
 	}
 
-	return Value(t, x.r1)
+	return x.r1
 }
 
 type Return2Test[T1, T2 any] struct {
@@ -81,14 +81,14 @@ func (x Return2Test[T1, T2]) Error(t testing.TB) ErrorTest {
 	return Error(t, x.err)
 }
 
-// NoError check if the function returned no error. If error is not nil, it will fail. If error is nil, it provides ValueTest for 1st and 2nd returned value.
-func (x Return2Test[T1, T2]) NoError(t testing.TB) (ValueTest[T1], ValueTest[T2]) {
+// NoError check if the function returned no error. If error is not nil, it will fail. If error is nil, it provides 1st and 2nd returned value.
+func (x Return2Test[T1, T2]) NoError(t testing.TB) (T1, T2) {
 	t.Helper()
 	if x.err != nil {
 		t.Errorf("got errored, but should not get error")
 	}
 
-	return Value(t, x.r1), Value(t, x.r2)
+	return x.r1, x.r2
 }
 
 type Return3Test[T1, T2, T3 any] struct {
@@ -131,12 +131,12 @@ func (x Return3Test[T1, T2, T3]) Error(t testing.TB) ErrorTest {
 	return Error(t, x.err)
 }
 
-// NoError check if the function returned no error. If error is not nil, it will fail. If error is nil, it provides ValueTest for 1st, 2nd and 3rd returned value.
-func (x Return3Test[T1, T2, T3]) NoError(t testing.TB) (ValueTest[T1], ValueTest[T2]) {
+// NoError check if the function returned no error. If error is not nil, it will fail. If error is nil, it provides 1st, 2nd and 3rd returned value.
+func (x Return3Test[T1, T2, T3]) NoError(t testing.TB) (T1, T2, T3) {
 	t.Helper()
 	if x.err != nil {
 		t.Errorf("got errored, but should not get error")
 	}
 
-	return Value(t, x.r1), Value(t, x.r2)
+	return x.r1, x.r2, x.r3
 }

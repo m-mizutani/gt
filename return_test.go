@@ -14,7 +14,7 @@ func TestReturn(t *testing.T) {
 		doSomeRequest := func() (string, error) {
 			return "ok", nil
 		}
-		gt.Return1(doSomeRequest()).NoError(r).Equal("ok")
+		gt.V(r, gt.Return1(doSomeRequest()).NoError(r)).Equal("ok")
 
 		if r.errs != 0 {
 			t.Error("should not fail")
@@ -44,7 +44,7 @@ func TestReturn(t *testing.T) {
 		}
 
 		// Check if getting no error and will get value
-		gt.Return1(goodFunc()).NoError(t).Equal("ok")
+		gt.Value(t, gt.Return1(goodFunc()).NoError(t)).Equal("ok")
 
 		// Check if getting error
 		gt.Return1(badFunc()).Error(t)
