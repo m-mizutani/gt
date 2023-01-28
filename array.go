@@ -8,7 +8,7 @@ type ArrayTest[T any] struct {
 }
 
 // Array provides ArrayTest that has not only Value test methods but also array (slice) comparison methods
-func Array[T comparable](t testing.TB, actual []T) ArrayTest[T] {
+func Array[T any](t testing.TB, actual []T) ArrayTest[T] {
 	t.Helper()
 	return ArrayTest[T]{
 		actual: actual,
@@ -17,7 +17,7 @@ func Array[T comparable](t testing.TB, actual []T) ArrayTest[T] {
 }
 
 // A is sugar syntax of Array
-func A[T comparable](t testing.TB, actual []T) ArrayTest[T] {
+func A[T any](t testing.TB, actual []T) ArrayTest[T] {
 	t.Helper()
 	return Array(t, actual)
 }
