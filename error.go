@@ -57,3 +57,25 @@ func ErrorAs[T any](t testing.TB, actual error, callback func(expect *T)) {
 		t.Errorf("expected %T, but got %T", tgt, actual)
 	}
 }
+
+type NoErrorTest struct {
+	t      testing.TB
+	actual error
+}
+
+// NoError checks if error does not occur.
+func NoError(t testing.TB, actual error) NoErrorTest {
+	if actual != nil {
+		t.Errorf("expected no error, but got %v", actual)
+	}
+	return NoErrorTest{
+		t:      t,
+		actual: actual,
+	}
+}
+
+func (x NoErrorTest) Must() {
+	if x.actual != nil {
+		x.t.FailNow()
+	}
+}
