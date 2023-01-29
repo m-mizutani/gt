@@ -11,7 +11,7 @@ import (
 func TestError(t *testing.T) {
 	err := errors.New("test")
 	cnt := newRecorder()
-	gt.Error(cnt, err).Fail()
+	gt.Error(cnt, err)
 
 	if cnt.errs > 0 {
 		t.Error("error test has unexpected result")

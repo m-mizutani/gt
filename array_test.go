@@ -55,8 +55,8 @@ func TestArrayExample2(t *testing.T) {
 	}
 	ctx := context.Background()
 
-	unorderedUsers, err := GetUsers(ctx)
-	gt.Error(t, err).Pass().Must()
+	unorderedUsers := gt.R1(GetUsers(ctx)).NoError(t)
+
 	gt.Array(t, unorderedUsers).
 		Have(&user{
 			ID:   1000,
