@@ -224,3 +224,16 @@ func (x MapTest[K, V]) Must() MapTest[K, V] {
 	x.t = newErrorWithFail(x.t)
 	return x
 }
+
+// Elem calls f with testing.TB and idx th elements in the array. If idx is out of range, f is not called and test will trigger error.
+func (x MapTest[K, V]) Elem(key K, f func(t testing.TB, v V)) MapTest[K, V] {
+	x.t.Helper()
+
+	if v, ok := x.actual[key]; !ok {
+		x.t.Errorf("key '%v' is not found in the map", key)
+	} else {
+		f(x.t, v)
+	}
+
+	return x
+}

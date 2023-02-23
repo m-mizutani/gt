@@ -184,3 +184,16 @@ func (x ArrayTest[T]) Must() ArrayTest[T] {
 	x.t = newErrorWithFail(x.t)
 	return x
 }
+
+// Elem calls f with testing.TB and idx th elements in the array. If idx is out of range, f is not called and test will trigger error.
+func (x ArrayTest[T]) Elem(idx int, f func(t testing.TB, v T)) ArrayTest[T] {
+	x.t.Helper()
+
+	if idx < 0 || len(x.actual) <= idx {
+		x.t.Errorf("array length is %d, then %d is out of range", len(x.actual), idx)
+	} else {
+		f(x.t, x.actual[idx])
+	}
+
+	return x
+}
