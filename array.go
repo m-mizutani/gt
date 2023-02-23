@@ -54,6 +54,42 @@ func (x ArrayTest[T]) NotEqual(expect []T) ArrayTest[T] {
 	return x
 }
 
+// EqualAt checks if actual[idx] equals expect. If idx is out of range, f is not called and test will trigger error.
+//
+//	v := []int{1, 2, 3, 5}
+//	gt.Array(t, v).EqualAt(2, 3) // Pass
+//	gt.Array(t, v).EqualAt(2, 1) // Fail
+//	gt.Array(t, v).EqualAt(2, 5) // Fail by out of range
+func (x ArrayTest[T]) EqualAt(idx int, expect T) ArrayTest[T] {
+	x.t.Helper()
+
+	if idx < 0 || len(x.actual) <= idx {
+		x.t.Errorf("array length is %d, then %d is out of range", len(x.actual), idx)
+	} else if !EvalCompare(x.actual[idx], expect) {
+		x.t.Errorf("array[%d] is expected %v, but actual is %v", idx, expect, x.actual[idx])
+	}
+
+	return x
+}
+
+// NotEqualAt checks if actual[idx] equals expect. If idx is out of range, f is not called and test will trigger error.
+//
+//	v := []int{1, 2, 3, 5}
+//	gt.Array(t, v).NotEqualAt(2, 1) // Pass
+//	gt.Array(t, v).NotEqualAt(2, 3) // Fail
+//	gt.Array(t, v).NotEqualAt(2, 5) // Fail by out of range
+func (x ArrayTest[T]) NotEqualAt(idx int, expect T) ArrayTest[T] {
+	x.t.Helper()
+
+	if idx < 0 || len(x.actual) <= idx {
+		x.t.Errorf("array length is %d, then %d is out of range", len(x.actual), idx)
+	} else if EvalCompare(x.actual[idx], expect) {
+		x.t.Errorf("array[%d] is not expected %v, but actual is %v", idx, expect, x.actual[idx])
+	}
+
+	return x
+}
+
 func (x ArrayTest[T]) have(expect T) bool {
 	x.t.Helper()
 
@@ -186,6 +222,11 @@ func (x ArrayTest[T]) Must() ArrayTest[T] {
 }
 
 // Elem calls f with testing.TB and idx th elements in the array. If idx is out of range, f is not called and test will trigger error.
+//
+//	v := []int{1, 2, 3, 5}
+//	gt.Array(t, v).Elem(2, func(t testing.TB, v int) {
+//		gt.Value(t, v).Equal(3) // Pass
+//	})
 func (x ArrayTest[T]) Elem(idx int, f func(t testing.TB, v T)) ArrayTest[T] {
 	x.t.Helper()
 

@@ -103,6 +103,42 @@ func TestMap(t *testing.T) {
 				pass: true,
 			},
 		},
+		"EqualAt": {
+			"pass": {
+				test: func(mt gt.MapTest[string, int]) {
+					mt.EqualAt("blue", 5)
+				},
+				pass: true,
+			},
+			"fail by not equal": {
+				test: func(mt gt.MapTest[string, int]) {
+					mt.EqualAt("blue", 6)
+				},
+			},
+			"fail by key not found": {
+				test: func(mt gt.MapTest[string, int]) {
+					mt.EqualAt("orange", 5)
+				},
+			},
+		},
+		"NotEqualAt": {
+			"pass": {
+				test: func(mt gt.MapTest[string, int]) {
+					mt.NotEqualAt("blue", 6)
+				},
+				pass: true,
+			},
+			"fail by equal": {
+				test: func(mt gt.MapTest[string, int]) {
+					mt.NotEqualAt("blue", 5)
+				},
+			},
+			"fail by key not found": {
+				test: func(mt gt.MapTest[string, int]) {
+					mt.NotEqualAt("orange", 6)
+				},
+			},
+		},
 
 		"HaveKey": {
 			"pass": {
@@ -210,6 +246,32 @@ func TestMap(t *testing.T) {
 					mt.NotHaveKeyValue("orange", 0)
 				},
 				pass: true,
+			},
+		},
+		"Elem": {
+			"pass": {
+				test: func(mt gt.MapTest[string, int]) {
+					mt.Elem("blue", func(t testing.TB, v int) {
+						gt.V(t, v).Equal(5)
+					})
+				},
+				pass: true,
+			},
+			"fail by not equal": {
+				test: func(mt gt.MapTest[string, int]) {
+					mt.Elem("blue", func(t testing.TB, v int) {
+						gt.V(t, v).Equal(6)
+					})
+				},
+				pass: false,
+			},
+			"fail by key not found": {
+				test: func(mt gt.MapTest[string, int]) {
+					mt.Elem("orange", func(t testing.TB, v int) {
+						gt.V(t, v).Equal(5)
+					})
+				},
+				pass: false,
 			},
 		},
 	}

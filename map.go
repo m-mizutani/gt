@@ -73,6 +73,46 @@ func (x MapTest[K, V]) NotEqual(expect map[K]V) MapTest[K, V] {
 	return x
 }
 
+// EqualAt checks if actual[key] equals expect. If key is not found, test will fail.
+//
+//	m := map[string]int{
+//		"blue": 5,
+//	}
+//	gt.Map(t, m).NotEqualAt("blue", 5)   // Pass
+//	gt.Map(t, m).NotEqualAt("blue", 1)   // Fail
+//	gt.Map(t, m).NotEqualAt("orange", 5) // Fail by key not found
+func (x MapTest[K, V]) EqualAt(key K, expect V) MapTest[K, V] {
+	x.t.Helper()
+
+	if v, ok := x.actual[key]; !ok {
+		x.t.Errorf("key '%v' is not found in the map", key)
+	} else if !EvalCompare(v, expect) {
+		x.t.Errorf("map[%v] is expected %v, but actual is %v", key, expect, v)
+	}
+
+	return x
+}
+
+// NotEqualAt checks if actual[key] equals expect. If key is not found, test will fail.
+//
+//	m := map[string]int{
+//		"blue": 5,
+//	}
+//	gt.Map(t, m).NotEqualAt("blue", 1)   // Pass
+//	gt.Map(t, m).NotEqualAt("blue", 5)   // Fail
+//	gt.Map(t, m).NotEqualAt("orange", 5) // Fail by key not found
+func (x MapTest[K, V]) NotEqualAt(key K, expect V) MapTest[K, V] {
+	x.t.Helper()
+
+	if v, ok := x.actual[key]; !ok {
+		x.t.Errorf("key '%v' is not found in the map", key)
+	} else if EvalCompare(v, expect) {
+		x.t.Errorf("map[%v] is expected %v, but actual is %v", key, expect, v)
+	}
+
+	return x
+}
+
 // HaveKey checks if the map has expect key.
 //
 //	m := map[string]int{
@@ -226,6 +266,13 @@ func (x MapTest[K, V]) Must() MapTest[K, V] {
 }
 
 // Elem calls f with testing.TB and idx th elements in the array. If idx is out of range, f is not called and test will trigger error.
+//
+//	m := map[string]int{
+//		"blue": 5,
+//	}
+//	gt.Map(t, m).Elem("blue", func(t testing.TB, v int) {
+//		gt.Value(t, v).Equal(5) // <- pass
+//	})
 func (x MapTest[K, V]) Elem(key K, f func(t testing.TB, v V)) MapTest[K, V] {
 	x.t.Helper()
 
