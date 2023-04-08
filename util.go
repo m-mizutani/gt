@@ -1,6 +1,12 @@
 package gt
 
-import "reflect"
+import (
+	"fmt"
+	"reflect"
+	"strings"
+
+	"github.com/google/go-cmp/cmp"
+)
 
 // EvalCompare is a function to check if actual value equals with expected value. A developer can replace EvalCompare with own evaluation function if needed.
 //
@@ -33,4 +39,23 @@ var EvalIsNil = func(v any) bool {
 	default:
 		return false
 	}
+}
+
+var Diff = func(expect, actual any) string {
+	switch reflect.ValueOf(actual).Kind() {
+	case reflect.Pointer, reflect.UnsafePointer,
+		reflect.Array, reflect.Slice,
+		reflect.Struct, reflect.Map:
+		return "diff:\n" + cmp.Diff(expect, actual, cmp.Exporter(func(t reflect.Type) bool { return true }))
+
+	default:
+		return strings.Join([]string{
+			fmt.Sprintf("actual: %v", actual),
+			fmt.Sprintf("expect: %v", expect),
+		}, "\n")
+	}
+}
+
+var DumpError = func(err error) string {
+	return err.Error()
 }

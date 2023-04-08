@@ -38,7 +38,8 @@ func (x Return1Test[T1]) Error(t testing.TB) ErrorTest {
 func (x Return1Test[T1]) NoError(t testing.TB) T1 {
 	t.Helper()
 	if x.err != nil {
-		t.Errorf("got errored, but should not get error")
+		t.Errorf("got errored, but should not get error\n" + DumpError(x.err))
+		t.FailNow()
 	}
 
 	return x.r1
@@ -85,7 +86,8 @@ func (x Return2Test[T1, T2]) Error(t testing.TB) ErrorTest {
 func (x Return2Test[T1, T2]) NoError(t testing.TB) (T1, T2) {
 	t.Helper()
 	if x.err != nil {
-		t.Errorf("got errored, but should not get error")
+		t.Errorf("got errored, but should not get error\n" + DumpError(x.err))
+		t.FailNow()
 	}
 
 	return x.r1, x.r2
@@ -135,7 +137,8 @@ func (x Return3Test[T1, T2, T3]) Error(t testing.TB) ErrorTest {
 func (x Return3Test[T1, T2, T3]) NoError(t testing.TB) (T1, T2, T3) {
 	t.Helper()
 	if x.err != nil {
-		t.Errorf("got errored, but should not get error")
+		t.Errorf("got errored, but should not get error\n" + DumpError(x.err))
+		t.FailNow()
 	}
 
 	return x.r1, x.r2, x.r3
