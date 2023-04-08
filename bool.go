@@ -19,6 +19,7 @@ func B(t *testing.T, actual bool) BoolTest {
 }
 
 func (x BoolTest) True() BoolTest {
+	x.t.Helper()
 	if !x.actual {
 		x.t.Error("expected true, but false")
 	}
@@ -26,6 +27,7 @@ func (x BoolTest) True() BoolTest {
 }
 
 func (x BoolTest) False() BoolTest {
+	x.t.Helper()
 	if x.actual {
 		x.t.Error("expected false, but true")
 	}
