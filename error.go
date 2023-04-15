@@ -65,6 +65,7 @@ type NoErrorTest struct {
 
 // NoError checks if error does not occur.
 func NoError(t testing.TB, actual error) NoErrorTest {
+	t.Helper()
 	if actual != nil {
 		t.Errorf("expected no error, but got %v", actual)
 	}
@@ -75,6 +76,7 @@ func NoError(t testing.TB, actual error) NoErrorTest {
 }
 
 func (x NoErrorTest) Must() {
+	x.t.Helper()
 	if x.actual != nil {
 		x.t.FailNow()
 	}
