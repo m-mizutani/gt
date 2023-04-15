@@ -67,7 +67,7 @@ type NoErrorTest struct {
 func NoError(t testing.TB, actual error) NoErrorTest {
 	t.Helper()
 	if actual != nil {
-		t.Errorf("expected no error, but got %v", actual)
+		t.Errorf("expected no error, but got %+v", actual)
 	}
 	return NoErrorTest{
 		t:      t,
