@@ -251,7 +251,7 @@ func TestMap(t *testing.T) {
 		"Elem": {
 			"pass": {
 				test: func(mt gt.MapTest[string, int]) {
-					mt.Elem("blue", func(t testing.TB, v int) {
+					mt.At("blue", func(t testing.TB, v int) {
 						gt.V(t, v).Equal(5)
 					})
 				},
@@ -259,7 +259,7 @@ func TestMap(t *testing.T) {
 			},
 			"fail by not equal": {
 				test: func(mt gt.MapTest[string, int]) {
-					mt.Elem("blue", func(t testing.TB, v int) {
+					mt.At("blue", func(t testing.TB, v int) {
 						gt.V(t, v).Equal(6)
 					})
 				},
@@ -267,7 +267,7 @@ func TestMap(t *testing.T) {
 			},
 			"fail by key not found": {
 				test: func(mt gt.MapTest[string, int]) {
-					mt.Elem("orange", func(t testing.TB, v int) {
+					mt.At("orange", func(t testing.TB, v int) {
 						gt.V(t, v).Equal(5)
 					})
 				},

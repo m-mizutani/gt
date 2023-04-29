@@ -221,13 +221,13 @@ func (x ArrayTest[T]) Must() ArrayTest[T] {
 	return x
 }
 
-// Elem calls f with testing.TB and idx th elements in the array. If idx is out of range, f is not called and test will trigger error.
+// At calls f with testing.TB and idx th elements in the array. If idx is out of range, f is not called and test will trigger error.
 //
 //	v := []int{1, 2, 3, 5}
-//	gt.Array(t, v).Elem(2, func(t testing.TB, v int) {
+//	gt.Array(t, v).At(2, func(t testing.TB, v int) {
 //		gt.Value(t, v).Equal(3) // Pass
 //	})
-func (x ArrayTest[T]) Elem(idx int, f func(t testing.TB, v T)) ArrayTest[T] {
+func (x ArrayTest[T]) At(idx int, f func(t testing.TB, v T)) ArrayTest[T] {
 	x.t.Helper()
 
 	if idx < 0 || len(x.actual) <= idx {

@@ -265,15 +265,15 @@ func (x MapTest[K, V]) Must() MapTest[K, V] {
 	return x
 }
 
-// Elem calls f with testing.TB and idx th elements in the array. If idx is out of range, f is not called and test will trigger error.
+// At calls f with testing.TB and idx th elements in the array. If idx is out of range, f is not called and test will trigger error.
 //
 //	m := map[string]int{
 //		"blue": 5,
 //	}
-//	gt.Map(t, m).Elem("blue", func(t testing.TB, v int) {
+//	gt.Map(t, m).At("blue", func(t testing.TB, v int) {
 //		gt.Value(t, v).Equal(5) // <- pass
 //	})
-func (x MapTest[K, V]) Elem(key K, f func(t testing.TB, v V)) MapTest[K, V] {
+func (x MapTest[K, V]) At(key K, f func(t testing.TB, v V)) MapTest[K, V] {
 	x.t.Helper()
 
 	if v, ok := x.actual[key]; !ok {
