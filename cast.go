@@ -8,6 +8,7 @@ import "testing"
 //	b := gt.Cast[string](a) // <- Pass and set "hello" to b
 //	c := gt.Cast[int](a)    // <- Fail and stop test
 func Cast[T any](t testing.TB, v any) T {
+	t.Helper()
 	casted, ok := v.(T)
 	if !ok {
 		var a T
@@ -18,5 +19,6 @@ func Cast[T any](t testing.TB, v any) T {
 }
 
 func C[T any](t testing.TB, v any) T {
+	t.Helper()
 	return Cast[T](t, v)
 }
