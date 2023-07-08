@@ -91,6 +91,18 @@ func TestValueEqual(t *testing.T) {
 			},
 			errCount: 1,
 		},
+		"found in array": {
+			f: func(mock testing.TB) {
+				gt.Value(mock, "c").In("a", "b", "c")
+			},
+			errCount: 0,
+		},
+		"not found in array": {
+			f: func(mock testing.TB) {
+				gt.Value(mock, "c").In("a", "b", "z")
+			},
+			errCount: 1,
+		},
 	}
 
 	for title, tc := range testCases {

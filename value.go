@@ -90,6 +90,20 @@ func (x ValueTest[T]) NotNil() ValueTest[T] {
 	return x
 }
 
+// In checks actual is in expects. Default evaluation function uses reflect.DeepEqual.
+func (x ValueTest[T]) In(expects ...T) ValueTest[T] {
+	x.t.Helper()
+
+	for i := range expects {
+		if EvalCompare(x.actual, expects[i]) {
+			return x
+		}
+	}
+
+	x.t.Errorf("values should be in %v, but not found %v", expects, x.actual)
+	return x
+}
+
 // Must check if error has occurred in previous test. If errors will occur in following test, it immediately stop test by t.Failed().
 //
 //	name := "Alice"
