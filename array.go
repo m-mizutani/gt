@@ -238,3 +238,25 @@ func (x ArrayTest[T]) At(idx int, f func(t testing.TB, v T)) ArrayTest[T] {
 
 	return x
 }
+
+// Any calls f with testing.TB and each elements in the array. If f returns true, Any returns immediately and test will pass. If f returns false for all elements, Any will trigger error.
+//
+//	v := []int{1, 2, 3, 5}
+//	gt.Array(t, v).Any(func(t testing.TB, v int) bool {
+//	    return v == 3
+//	}) // Pass
+//	gt.Array(t, v).Any(func(t testing.TB, v int) bool {
+//	    return v == 4
+//	}) // Fail
+func (x ArrayTest[T]) Any(f func(t testing.TB, v T) bool) ArrayTest[T] {
+	x.t.Helper()
+
+	for i := range x.actual {
+		if f(x.t, x.actual[i]) {
+			return x
+		}
+	}
+	x.t.Errorf("no matched elements in array")
+
+	return x
+}
