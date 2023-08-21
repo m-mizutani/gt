@@ -184,6 +184,114 @@ func TestArray(t *testing.T) {
 				pass: true,
 			},
 		},
+		"Have": {
+			"pass": {
+				test: func(arr gt.ArrayTest[string]) {
+					arr.Have("blue")
+				},
+				pass: true,
+			},
+			"fail": {
+				test: func(arr gt.ArrayTest[string]) {
+					arr.Have("yellow")
+				},
+				pass: false,
+			},
+		},
+		"NotHave": {
+			"fail": {
+				test: func(arr gt.ArrayTest[string]) {
+					arr.NotHave("blue")
+				},
+				pass: false,
+			},
+			"pass": {
+				test: func(arr gt.ArrayTest[string]) {
+					arr.NotHave("yellow")
+				},
+				pass: true,
+			},
+		},
+		"Length": {
+			"pass": {
+				test: func(arr gt.ArrayTest[string]) {
+					arr.Length(3)
+				},
+				pass: true,
+			},
+			"fail": {
+				test: func(arr gt.ArrayTest[string]) {
+					arr.Length(4)
+				},
+				pass: false,
+			},
+		},
+		"Longer": {
+			"pass": {
+				test: func(arr gt.ArrayTest[string]) {
+					arr.Longer(2)
+				},
+				pass: true,
+			},
+			"fail": {
+				test: func(arr gt.ArrayTest[string]) {
+					arr.Longer(3)
+				},
+				pass: false,
+			},
+		},
+		"Shorter": {
+			"pass": {
+				test: func(arr gt.ArrayTest[string]) {
+					arr.Shorter(4)
+				},
+				pass: true,
+			},
+			"fail": {
+				test: func(arr gt.ArrayTest[string]) {
+					arr.Shorter(3)
+				},
+				pass: false,
+			},
+		},
+
+		"Any": {
+			"pass": {
+				test: func(arr gt.ArrayTest[string]) {
+					arr.Any(func(t testing.TB, x string) bool {
+						return len(x) > 4
+					})
+				},
+				pass: true,
+			},
+			"fail": {
+				test: func(arr gt.ArrayTest[string]) {
+					arr.Any(func(t testing.TB, x string) bool {
+						return len(x) > 6
+					})
+				},
+				pass: false,
+			},
+		},
+
+		"All": {
+			"pass": {
+				test: func(arr gt.ArrayTest[string]) {
+					arr.All(func(t testing.TB, x string) bool {
+						return len(x) > 2
+					})
+				},
+				pass: true,
+			},
+			"fail": {
+				test: func(arr gt.ArrayTest[string]) {
+					arr.All(func(t testing.TB, x string) bool {
+						return len(x) > 4
+					})
+				},
+				pass: false,
+			},
+		},
 	}
 
 	for feature, cases := range testCases {
