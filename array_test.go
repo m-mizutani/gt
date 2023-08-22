@@ -258,7 +258,7 @@ func TestArray(t *testing.T) {
 		"Any": {
 			"pass": {
 				test: func(arr gt.ArrayTest[string]) {
-					arr.Any(func(t testing.TB, x string) bool {
+					arr.Any(func(x string) bool {
 						return len(x) > 4
 					})
 				},
@@ -266,7 +266,7 @@ func TestArray(t *testing.T) {
 			},
 			"fail": {
 				test: func(arr gt.ArrayTest[string]) {
-					arr.Any(func(t testing.TB, x string) bool {
+					arr.Any(func(x string) bool {
 						return len(x) > 6
 					})
 				},
@@ -277,7 +277,7 @@ func TestArray(t *testing.T) {
 		"All": {
 			"pass": {
 				test: func(arr gt.ArrayTest[string]) {
-					arr.All(func(t testing.TB, x string) bool {
+					arr.All(func(x string) bool {
 						return len(x) > 2
 					})
 				},
@@ -285,7 +285,7 @@ func TestArray(t *testing.T) {
 			},
 			"fail": {
 				test: func(arr gt.ArrayTest[string]) {
-					arr.All(func(t testing.TB, x string) bool {
+					arr.All(func(x string) bool {
 						return len(x) > 4
 					})
 				},
