@@ -66,7 +66,7 @@ func (x MapTest[K, V]) NotEqual(expect map[K]V) MapTest[K, V] {
 	x.t.Helper()
 
 	if EvalCompare(x.actual, expect) {
-		x.t.Errorf("maps should not be matched, %v", x.actual)
+		x.t.Errorf("maps should not be matched, %+v", x.actual)
 		return x
 	}
 
@@ -85,9 +85,9 @@ func (x MapTest[K, V]) EqualAt(key K, expect V) MapTest[K, V] {
 	x.t.Helper()
 
 	if v, ok := x.actual[key]; !ok {
-		x.t.Errorf("key '%v' is not found in the map", key)
+		x.t.Errorf("key '%+v' is not found in the map", key)
 	} else if !EvalCompare(v, expect) {
-		x.t.Errorf("map[%v] is expected %v, but actual is %v", key, expect, v)
+		x.t.Errorf("map[%+v] is expected %+v, but actual is %+v", key, expect, v)
 	}
 
 	return x
@@ -105,9 +105,9 @@ func (x MapTest[K, V]) NotEqualAt(key K, expect V) MapTest[K, V] {
 	x.t.Helper()
 
 	if v, ok := x.actual[key]; !ok {
-		x.t.Errorf("key '%v' is not found in the map", key)
+		x.t.Errorf("key '%+v' is not found in the map", key)
 	} else if EvalCompare(v, expect) {
-		x.t.Errorf("map[%v] is expected %v, but actual is %v", key, expect, v)
+		x.t.Errorf("map[%+v] is expected %+v, but actual is %+v", key, expect, v)
 	}
 
 	return x
@@ -124,7 +124,7 @@ func (x MapTest[K, V]) HaveKey(expect K) MapTest[K, V] {
 	x.t.Helper()
 
 	if _, ok := x.actual[expect]; !ok {
-		x.t.Errorf("expected to contain the key '%v', but not got", expect)
+		x.t.Errorf("expected to contain the key '%+v', but not got", expect)
 	}
 
 	return x
@@ -163,7 +163,7 @@ func (x MapTest[K, V]) HaveValue(expect V) MapTest[K, V] {
 		}
 	}
 
-	x.t.Errorf("expected to contain the value '%v', but not got", expect)
+	x.t.Errorf("expected to contain the value '%+v', but not got", expect)
 	return x
 }
 
@@ -211,7 +211,7 @@ func (x MapTest[K, V]) HaveKeyValue(expectKey K, expectValue V) MapTest[K, V] {
 	x.t.Helper()
 
 	if !x.haveKeyValue(expectKey, expectValue) {
-		x.t.Errorf("expected to contain (%v, %v), but not contain", expectKey, expectValue)
+		x.t.Errorf("expected to contain (%+v, %+v), but not contain", expectKey, expectValue)
 	}
 	return x
 }
@@ -228,7 +228,7 @@ func (x MapTest[K, V]) NotHaveKeyValue(expectKey K, expectValue V) MapTest[K, V]
 	x.t.Helper()
 
 	if x.haveKeyValue(expectKey, expectValue) {
-		x.t.Errorf("expected not to contain (%v, %v), but contained", expectKey, expectValue)
+		x.t.Errorf("expected not to contain (%+v, %+v), but contained", expectKey, expectValue)
 	}
 
 	return x
@@ -277,7 +277,7 @@ func (x MapTest[K, V]) At(key K, f func(t testing.TB, v V)) MapTest[K, V] {
 	x.t.Helper()
 
 	if v, ok := x.actual[key]; !ok {
-		x.t.Errorf("key '%v' is not found in the map", key)
+		x.t.Errorf("key '%+v' is not found in the map", key)
 	} else {
 		f(x.t, v)
 	}

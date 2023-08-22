@@ -47,7 +47,7 @@ func (x ArrayTest[T]) NotEqual(expect []T) ArrayTest[T] {
 	x.t.Helper()
 
 	if EvalCompare(x.actual, expect) {
-		x.t.Errorf("arrays should not be matched, %v", x.actual)
+		x.t.Errorf("arrays should not be matched, %+v", x.actual)
 		return x
 	}
 
@@ -66,7 +66,7 @@ func (x ArrayTest[T]) EqualAt(idx int, expect T) ArrayTest[T] {
 	if idx < 0 || len(x.actual) <= idx {
 		x.t.Errorf("array length is %d, then %d is out of range", len(x.actual), idx)
 	} else if !EvalCompare(x.actual[idx], expect) {
-		x.t.Errorf("array[%d] is expected %v, but actual is %v", idx, expect, x.actual[idx])
+		x.t.Errorf("array[%d] is expected %+v, but actual is %+v", idx, expect, x.actual[idx])
 	}
 
 	return x
@@ -84,7 +84,7 @@ func (x ArrayTest[T]) NotEqualAt(idx int, expect T) ArrayTest[T] {
 	if idx < 0 || len(x.actual) <= idx {
 		x.t.Errorf("array length is %d, then %d is out of range", len(x.actual), idx)
 	} else if EvalCompare(x.actual[idx], expect) {
-		x.t.Errorf("array[%d] is not expected %v, but actual is %v", idx, expect, x.actual[idx])
+		x.t.Errorf("array[%d] is not expected %+v, but actual is %+v", idx, expect, x.actual[idx])
 	}
 
 	return x
@@ -110,7 +110,7 @@ func (x ArrayTest[T]) have(expect T) bool {
 func (x ArrayTest[T]) Have(expect T) ArrayTest[T] {
 	x.t.Helper()
 	if !x.have(expect) {
-		x.t.Errorf("%v expects to have %v, but not contains", x.actual, expect)
+		x.t.Errorf("%+v expects to have %+v, but not contains", x.actual, expect)
 	}
 	return x
 }
@@ -123,7 +123,7 @@ func (x ArrayTest[T]) Have(expect T) ArrayTest[T] {
 func (x ArrayTest[T]) NotHave(expect T) ArrayTest[T] {
 	x.t.Helper()
 	if x.have(expect) {
-		x.t.Errorf("%v does not expects to have %v, but contains", x.actual, expect)
+		x.t.Errorf("%+v does not expects to have %+v, but contains", x.actual, expect)
 	}
 	return x
 }
@@ -158,7 +158,7 @@ func (x ArrayTest[T]) contain(expect []T) bool {
 func (x ArrayTest[T]) Contain(expect []T) ArrayTest[T] {
 	x.t.Helper()
 	if !x.contain(expect) {
-		x.t.Errorf("%v expects to have %v, but not contains", x.actual, expect)
+		x.t.Errorf("%+v expects to have %+v, but not contains", x.actual, expect)
 	}
 	return x
 }
@@ -171,7 +171,7 @@ func (x ArrayTest[T]) Contain(expect []T) ArrayTest[T] {
 func (x ArrayTest[T]) NotContain(expect []T) ArrayTest[T] {
 	x.t.Helper()
 	if x.contain(expect) {
-		x.t.Errorf("%v expects to have %v, but not contains", x.actual, expect)
+		x.t.Errorf("%+v expects to have %+v, but not contains", x.actual, expect)
 	}
 	return x
 }
@@ -275,7 +275,7 @@ func (x ArrayTest[T]) All(f func(t testing.TB, v T) bool) ArrayTest[T] {
 
 	for i := range x.actual {
 		if !f(x.t, x.actual[i]) {
-			x.t.Errorf("unmatched element found in array: %v", x.actual[i])
+			x.t.Errorf("unmatched element found in array: %+v", x.actual[i])
 			return x
 		}
 	}

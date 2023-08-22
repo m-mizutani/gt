@@ -174,7 +174,7 @@ func TestValueNil(t *testing.T) {
 			gt.Value(cnt, tc.value).Nil()
 
 			if (cnt.errs > 0) != tc.isErr {
-				t.Errorf("Expected isErr: %v, but actual: %v (%T)", tc.isErr, cnt.errs, tc.value)
+				t.Errorf("Expected isErr: %+v, but actual: %+v (%T)", tc.isErr, cnt.errs, tc.value)
 			}
 		})
 	}
@@ -198,7 +198,7 @@ func TestValueNotNil(t *testing.T) {
 			gt.Value(cnt, tc.value).NotNil()
 
 			if (cnt.errs > 0) != tc.isErr {
-				t.Errorf("Expected isErr: %v, but actual: %v (%T)", tc.isErr, cnt.errs, tc.value)
+				t.Errorf("Expected isErr: %+v, but actual: %+v (%T)", tc.isErr, cnt.errs, tc.value)
 			}
 		})
 	}
