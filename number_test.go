@@ -113,7 +113,7 @@ func numberTest[T number](t *testing.T) {
 				n := gt.N(r, tc.actual)
 				tc.check(n)
 				if tc.pass != (r.errs == 0) {
-					t.Errorf("not expected result (expect: %v / actual: %v)", pass(tc.pass), pass(r.errs == 0))
+					t.Errorf("not expected result (expect: %+v / actual: %+v)", pass(tc.pass), pass(r.errs == 0))
 				}
 			})
 		}

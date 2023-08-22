@@ -47,7 +47,7 @@ func (x StringTest) Equal(expect string) StringTest {
 func (x StringTest) NotEqual(expect string) StringTest {
 	x.t.Helper()
 	if EvalCompare(x.actual, expect) {
-		x.t.Errorf("values should not be matched, %v", x.actual)
+		x.t.Errorf("values should not be matched, %+v", x.actual)
 	}
 
 	return x
@@ -57,7 +57,7 @@ func (x StringTest) NotEqual(expect string) StringTest {
 func (x StringTest) IsEmpty() StringTest {
 	x.t.Helper()
 	if len(x.actual) > 0 {
-		x.t.Errorf("value should be empty, %v", x.actual)
+		x.t.Errorf("value should be empty, %+v", x.actual)
 	}
 
 	return x
@@ -77,7 +77,7 @@ func (x StringTest) IsNotEmpty() StringTest {
 func (x StringTest) Contains(sub string) StringTest {
 	x.t.Helper()
 	if !strings.Contains(x.actual, sub) {
-		x.t.Errorf("value should contain %v, %v", sub, x.actual)
+		x.t.Errorf("value should contain %+v, %+v", sub, x.actual)
 	}
 
 	return x
@@ -87,7 +87,7 @@ func (x StringTest) Contains(sub string) StringTest {
 func (x StringTest) NotContains(sub string) StringTest {
 	x.t.Helper()
 	if strings.Contains(x.actual, sub) {
-		x.t.Errorf("value should not contain %v, %v", sub, x.actual)
+		x.t.Errorf("value should not contain %+v, %+v", sub, x.actual)
 	}
 
 	return x
@@ -97,7 +97,7 @@ func (x StringTest) NotContains(sub string) StringTest {
 func (x StringTest) HasPrefix(prefix string) StringTest {
 	x.t.Helper()
 	if !strings.HasPrefix(x.actual, prefix) {
-		x.t.Errorf("value should have prefix %v, %v", prefix, x.actual)
+		x.t.Errorf("value should have prefix %+v, %+v", prefix, x.actual)
 	}
 
 	return x
@@ -107,7 +107,7 @@ func (x StringTest) HasPrefix(prefix string) StringTest {
 func (x StringTest) NotHasPrefix(prefix string) StringTest {
 	x.t.Helper()
 	if strings.HasPrefix(x.actual, prefix) {
-		x.t.Errorf("value should not have prefix %v, %v", prefix, x.actual)
+		x.t.Errorf("value should not have prefix %+v, %+v", prefix, x.actual)
 	}
 
 	return x
@@ -117,7 +117,7 @@ func (x StringTest) NotHasPrefix(prefix string) StringTest {
 func (x StringTest) HasSuffix(suffix string) StringTest {
 	x.t.Helper()
 	if !strings.HasSuffix(x.actual, suffix) {
-		x.t.Errorf("value should have suffix %v, %v", suffix, x.actual)
+		x.t.Errorf("value should have suffix %+v, %+v", suffix, x.actual)
 	}
 
 	return x
@@ -127,7 +127,7 @@ func (x StringTest) HasSuffix(suffix string) StringTest {
 func (x StringTest) NotHasSuffix(suffix string) StringTest {
 	x.t.Helper()
 	if strings.HasSuffix(x.actual, suffix) {
-		x.t.Errorf("value should not have suffix %v, %v", suffix, x.actual)
+		x.t.Errorf("value should not have suffix %+v, %+v", suffix, x.actual)
 	}
 
 	return x
@@ -137,7 +137,7 @@ func (x StringTest) NotHasSuffix(suffix string) StringTest {
 func (x StringTest) Match(pattern string) StringTest {
 	x.t.Helper()
 	if !x.match(pattern) {
-		x.t.Errorf("value should match '%v', %v", pattern, x.actual)
+		x.t.Errorf("value should match '%+v', %+v", pattern, x.actual)
 	}
 
 	return x
@@ -147,7 +147,7 @@ func (x StringTest) Match(pattern string) StringTest {
 func (x StringTest) NotMatch(pattern string) StringTest {
 	x.t.Helper()
 	if x.match(pattern) {
-		x.t.Errorf("value should match '%v', %v", pattern, x.actual)
+		x.t.Errorf("value should match '%+v', %+v", pattern, x.actual)
 	}
 
 	return x
@@ -157,7 +157,7 @@ func (x StringTest) match(pattern string) bool {
 	x.t.Helper()
 	ptn, err := regexp.Compile(pattern)
 	if err != nil {
-		x.t.Errorf("invalid pattern, %v", pattern)
+		x.t.Errorf("invalid pattern, %+v", pattern)
 		x.t.FailNow()
 		return false
 	}

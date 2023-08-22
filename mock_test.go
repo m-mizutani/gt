@@ -23,7 +23,7 @@ func (x *recorder) Helper() {}
 func (x *recorder) Error(args ...any) {
 	var argv []string
 	for _, arg := range args {
-		argv = append(argv, fmt.Sprintf("%v", arg))
+		argv = append(argv, fmt.Sprintf("%+v", arg))
 	}
 	if x.fails == 0 {
 		x.msgs = append(x.msgs, strings.Join(argv, " "))

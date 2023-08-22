@@ -52,7 +52,7 @@ func (x ValueTest[T]) Equal(expect T) ValueTest[T] {
 func (x ValueTest[T]) NotEqual(expect T) ValueTest[T] {
 	x.t.Helper()
 	if EvalCompare(x.actual, expect) {
-		x.t.Errorf("values should not be matched, %v", x.actual)
+		x.t.Errorf("values should not be matched, %+v", x.actual)
 	}
 
 	return x
@@ -68,7 +68,7 @@ func (x ValueTest[T]) Nil() ValueTest[T] {
 	x.t.Helper()
 
 	if !EvalIsNil(x.actual) {
-		x.t.Errorf("expected nil, but got %v (%T)", x.actual, x.actual)
+		x.t.Errorf("expected nil, but got %+v (%T)", x.actual, x.actual)
 	}
 
 	return x
@@ -100,7 +100,7 @@ func (x ValueTest[T]) In(expects ...T) ValueTest[T] {
 		}
 	}
 
-	x.t.Errorf("values should be in %v, but not found %v", expects, x.actual)
+	x.t.Errorf("values should be in %+v, but not found %+v", expects, x.actual)
 	return x
 }
 

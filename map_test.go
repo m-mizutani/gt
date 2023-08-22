@@ -285,7 +285,7 @@ func TestMap(t *testing.T) {
 					tc.test(mt)
 
 					if tc.pass != (r.errs == 0) {
-						t.Errorf("expected: pass=%v, actual: err=%d", tc.pass, r.errs)
+						t.Errorf("expected: pass=%+v, actual: err=%d", tc.pass, r.errs)
 					}
 				})
 			}

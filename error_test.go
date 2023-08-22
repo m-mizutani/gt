@@ -30,10 +30,10 @@ func TestErrorAs(t *testing.T) {
 	gt.ErrorAs(t, err, func(tgt *testError) {
 		called++
 		if tgt.N != 5 {
-			t.Errorf("testError.N must be 5, but %v", tgt.N)
+			t.Errorf("testError.N must be 5, but %+v", tgt.N)
 		}
 	})
 	if called != 1 {
-		t.Errorf("callback must be called once, but %v times", called)
+		t.Errorf("callback must be called once, but %+v times", called)
 	}
 }

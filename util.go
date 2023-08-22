@@ -50,8 +50,8 @@ var Diff = func(expect, actual any) string {
 
 	default:
 		return strings.Join([]string{
-			fmt.Sprintf("actual: %v", actual),
-			fmt.Sprintf("expect: %v", expect),
+			fmt.Sprintf("actual: %+v", actual),
+			fmt.Sprintf("expect: %+v", expect),
 		}, "\n")
 	}
 }
