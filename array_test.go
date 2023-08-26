@@ -292,6 +292,15 @@ func TestArray(t *testing.T) {
 				pass: false,
 			},
 		},
+
+		"Distinct": {
+			"pass": {
+				test: func(arr gt.ArrayTest[string]) {
+					arr.Distinct()
+				},
+				pass: true,
+			},
+		},
 	}
 
 	for feature, cases := range testCases {
@@ -308,6 +317,18 @@ func TestArray(t *testing.T) {
 				})
 			}
 		})
+	}
+}
+
+func TestArrayDistinct(t *testing.T) {
+	target := []string{"blue", "orange", "red", "blue"}
+
+	r := newRecorder()
+	mt := gt.A(r, target)
+	mt.Distinct()
+
+	if r.errs == 0 {
+		t.Errorf("expected error, but no error")
 	}
 }
 
