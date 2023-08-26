@@ -281,3 +281,22 @@ func (x ArrayTest[T]) All(f func(v T) bool) ArrayTest[T] {
 	}
 	return x
 }
+
+// Distinct checks if all elements in the array are distinct. If not, test will trigger error.
+//
+//	gt.Array(t, []int{1, 2, 3, 5}).Distinct() // Pass
+//	gt.Array(t, []int{1, 2, 3, 2}).Distinct() // Fail
+func (x ArrayTest[T]) Distinct() ArrayTest[T] {
+	x.t.Helper()
+
+	for i := range x.actual {
+		for j := i + 1; j < len(x.actual); j++ {
+			if EvalCompare(x.actual[i], x.actual[j]) {
+				x.t.Errorf("array[%d] and array[%d] are not distinct (%+v)", i, j, x.actual[i])
+				return x
+			}
+		}
+	}
+
+	return x
+}
