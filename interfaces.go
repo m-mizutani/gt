@@ -7,6 +7,7 @@ type errorWithFail struct {
 }
 
 func newErrorWithFail(t testing.TB) *errorWithFail {
+	t.Helper()
 	return &errorWithFail{
 		TB: t,
 	}
