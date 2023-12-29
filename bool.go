@@ -33,3 +33,13 @@ func (x BoolTest) False() BoolTest {
 	}
 	return x
 }
+
+func True(t *testing.T, actual bool) BoolTest {
+	t.Helper()
+	return Bool(t, actual).True()
+}
+
+func False(t *testing.T, actual bool) BoolTest {
+	t.Helper()
+	return Bool(t, actual).False()
+}
