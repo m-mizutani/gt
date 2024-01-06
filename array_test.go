@@ -226,30 +226,30 @@ func TestArray(t *testing.T) {
 				pass: false,
 			},
 		},
-		"Longer": {
+		"LongerThan": {
 			"pass": {
 				test: func(arr gt.ArrayTest[string]) {
-					arr.Longer(2)
+					arr.LongerThan(2)
 				},
 				pass: true,
 			},
 			"fail": {
 				test: func(arr gt.ArrayTest[string]) {
-					arr.Longer(3)
+					arr.LongerThan(3)
 				},
 				pass: false,
 			},
 		},
-		"Shorter": {
+		"LessThan": {
 			"pass": {
 				test: func(arr gt.ArrayTest[string]) {
-					arr.Shorter(4)
+					arr.LessThan(4)
 				},
 				pass: true,
 			},
 			"fail": {
 				test: func(arr gt.ArrayTest[string]) {
-					arr.Shorter(3)
+					arr.LessThan(3)
 				},
 				pass: false,
 			},
@@ -344,7 +344,7 @@ func TestArrayExample1(t *testing.T) {
 		Equal([]int{1, 2, 3}).
 		NotEqual([]int{1, 2, 3, 4}).
 		NotEqual([]int{0, 1, 2}).
-		Length(3).Longer(2).Shorter(4)
+		Length(3).LongerThan(2).LessThan(4)
 }
 
 func TestArrayExample2(t *testing.T) {

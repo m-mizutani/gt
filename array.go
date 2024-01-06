@@ -188,12 +188,12 @@ func (x ArrayTest[T]) Length(expect int) ArrayTest[T] {
 	return x
 }
 
-// Longer checks if array length is longer than expect.
+// LongerThan checks if array length is longer than expect.
 //
 //	v := []int{1, 2, 3, 5}
-//	gt.Array(t, v).Longer(3) // Pass
-//	gt.Array(t, v).Longer(4) // Fail
-func (x ArrayTest[T]) Longer(expect int) ArrayTest[T] {
+//	gt.Array(t, v).LongerThan(3) // Pass
+//	gt.Array(t, v).LongerThan(4) // Fail
+func (x ArrayTest[T]) LongerThan(expect int) ArrayTest[T] {
 	x.t.Helper()
 	if !(expect < len(x.actual)) {
 		x.t.Errorf("array length is expected to be longer than %d, but actual is %d", expect, len(x.actual))
@@ -201,12 +201,12 @@ func (x ArrayTest[T]) Longer(expect int) ArrayTest[T] {
 	return x
 }
 
-// Shorter checks if array length is shorter than expect.
+// LessThan checks if array length is shorter than expect.
 //
 //	v := []int{1, 2, 3, 5}
-//	gt.Array(t, v).Shorter(5) // Pass
-//	gt.Array(t, v).Shorter(4) // Fail
-func (x ArrayTest[T]) Shorter(expect int) ArrayTest[T] {
+//	gt.Array(t, v).LessThan(5) // Pass
+//	gt.Array(t, v).LessThan(4) // Fail
+func (x ArrayTest[T]) LessThan(expect int) ArrayTest[T] {
 	x.t.Helper()
 	if !(len(x.actual) < expect) {
 		x.t.Errorf("array length is expected to be shorter than %d, but actual is %d", expect, len(x.actual))
