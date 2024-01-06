@@ -300,3 +300,38 @@ func (x ArrayTest[T]) Distinct() ArrayTest[T] {
 
 	return x
 }
+
+// MatchThen calls then function with testing.TB and first element in the array that match with match. If no element matches, MatchThen will trigger error.
+//
+//	v := []struct{
+//	    Name string
+//	    Age int
+//	}{
+//	    {"Alice", 20},
+//	    {"Bob", 21},
+//	    {"Carol", 22},
+//	}
+//	gt.Array(t, v).MatchThen(func(v struct{Name string, Age int}) bool {
+//	    return v.Name == "Bob"
+//	}, func(t testing.TB, v struct{Name string, Age int}) {
+//	    gt.Value(t, v.Age).Equal(21) // Pass
+//	})
+//
+//	gt.Array(t, v).MatchThen(func(v struct{Name string, Age int}) bool {
+//	    return v.Name == "Dave"
+//	}, func(t testing.TB, v struct{Name string, Age int}) {
+//	    gt.Value(t, v.Age).Equal(21) // Fail
+//	})
+func (x ArrayTest[T]) MatchThen(match func(v T) bool, then func(t testing.TB, v T)) ArrayTest[T] {
+	x.t.Helper()
+
+	for i := range x.actual {
+		if match(x.actual[i]) {
+			then(x.t, x.actual[i])
+			return x
+		}
+	}
+
+	x.t.Errorf("no matched elements in array")
+	return x
+}

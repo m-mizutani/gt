@@ -387,3 +387,47 @@ func TestArrayExample2(t *testing.T) {
 		}).
 		Length(3)
 }
+
+func TestMatchThen(t *testing.T) {
+	t.Run("should call then function when match is found", func(t *testing.T) {
+		testData := []int{1, 2, 3}
+		called := false
+		r := newRecorder()
+		arrayTest := gt.A(r, testData)
+
+		arrayTest.MatchThen(func(v int) bool {
+			return v == 2
+		}, func(t testing.TB, v int) {
+			called = true
+			if v != 2 {
+				t.Errorf("then func received wrong value, got %d, want %d", v, 2)
+			}
+		})
+
+		if !called {
+			t.Errorf("then function was not called")
+		}
+	})
+
+	t.Run("should report error when no match is found", func(t *testing.T) {
+		testData := []int{1, 2, 3}
+		called := false
+		mockT := &testing.T{}
+
+		arrayTest := gt.A(mockT, testData)
+
+		arrayTest.MatchThen(func(v int) bool {
+			return v == 4
+		}, func(t testing.TB, v int) {
+			called = true
+		})
+
+		if called {
+			t.Errorf("then function was called but should not have been")
+		}
+
+		if !mockT.Failed() {
+			t.Errorf("expected an error when no match is found")
+		}
+	})
+}
