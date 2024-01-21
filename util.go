@@ -2,6 +2,7 @@ package gt
 
 import (
 	"fmt"
+	"os"
 	"reflect"
 	"strings"
 
@@ -39,6 +40,21 @@ var EvalIsNil = func(v any) bool {
 	default:
 		return false
 	}
+}
+
+// EvalFileExists is a function to check if file exists. A developer can replace EvalFileExists with own file existence check function if needed.
+//
+//	EvalFileExists("testdata/file.txt") == true
+//	EvalFileExists("testdata/no-file.txt") == false
+var EvalFileExists = func(path string) bool {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true
+	}
+	if os.IsNotExist(err) {
+		return false
+	}
+	return false
 }
 
 var Diff = func(expect, actual any) string {
