@@ -60,8 +60,8 @@ func TestFileString(t *testing.T) {
 	ft := gt.File(t, file.Name())
 
 	// Test the file content using the String method
-	ft.String(func(st gt.StringTest) {
-		st.Equal("hello")
+	ft.String(func(t testing.TB, s string) {
+		gt.Equal(t, s, "hello")
 	})
 }
 

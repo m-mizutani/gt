@@ -54,10 +54,10 @@ func (x FileTest) NotExists() FileTest {
 
 // String calls f with file content
 //
-//	gt.File(t, "testdata/file.txt").String(func(s StringTest) {
-//	   s.Equal("hello")
+//	gt.File(t, "testdata/file.txt").String(func(t testing.TB, s string) {
+//	   gt.Equal(t, s, "hello")
 //	})
-func (x FileTest) String(f func(StringTest)) FileTest {
+func (x FileTest) String(f func(t testing.TB, s string)) FileTest {
 	x.t.Helper()
 	data, err := os.ReadFile(x.path)
 	if err != nil {
@@ -65,7 +65,7 @@ func (x FileTest) String(f func(StringTest)) FileTest {
 		return x
 	}
 
-	f(String(x.t, string(data)))
+	f(x.t, string(data))
 	return x
 }
 
