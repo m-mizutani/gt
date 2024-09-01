@@ -7,14 +7,14 @@ type BoolTest struct {
 	actual bool
 }
 
-func Bool(t *testing.T, actual bool) BoolTest {
+func Bool(t testing.TB, actual bool) BoolTest {
 	return BoolTest{
 		t:      t,
 		actual: actual,
 	}
 }
 
-func B(t *testing.T, actual bool) BoolTest {
+func B(t testing.TB, actual bool) BoolTest {
 	return Bool(t, actual)
 }
 
@@ -34,12 +34,12 @@ func (x BoolTest) False() BoolTest {
 	return x
 }
 
-func True(t *testing.T, actual bool) BoolTest {
+func True(t testing.TB, actual bool) BoolTest {
 	t.Helper()
 	return Bool(t, actual).True()
 }
 
-func False(t *testing.T, actual bool) BoolTest {
+func False(t testing.TB, actual bool) BoolTest {
 	t.Helper()
 	return Bool(t, actual).False()
 }
