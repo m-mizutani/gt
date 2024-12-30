@@ -48,11 +48,11 @@ type user struct {
 }
 u1 := user{Name: "blue"}
 
-// gt.Value(u1).Equal(1)                  // Compile error
-// gt.Value(u1).Equal("blue")             // Compile error
-// gt.Value(u1).Equal(&user{Name:"blue"}) // Compile error
+// gt.Value(t, u1).Equal(1)                  // Compile error
+// gt.Value(t, u1).Equal("blue")             // Compile error
+// gt.Value(t, u1).Equal(&user{Name:"blue"}) // Compile error
 
-gt.Value(u1).Equal(user{Name:"blue"}) // Pass
+gt.Value(t, u1).Equal(user{Name:"blue"}) // Pass
 ```
 
 ### Number
