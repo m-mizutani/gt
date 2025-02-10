@@ -7,12 +7,13 @@ import (
 )
 
 func TestNil(t *testing.T) {
+	var v *int
 	testCases := map[string]struct {
 		input any
 		pass  bool
 	}{
 		"nil_pass": {
-			input: nil,
+			input: v,
 			pass:  true,
 		},
 		"nil_fail": {
@@ -33,6 +34,7 @@ func TestNil(t *testing.T) {
 }
 
 func TestNotNil(t *testing.T) {
+	var v *int
 	testCases := map[string]struct {
 		input any
 		pass  bool
@@ -42,7 +44,7 @@ func TestNotNil(t *testing.T) {
 			pass:  true,
 		},
 		"not_nil_fail": {
-			input: nil,
+			input: v,
 			pass:  false,
 		},
 	}
