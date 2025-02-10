@@ -43,6 +43,14 @@ func isNil(v any) bool {
 	}
 }
 
+// Nil is a helper function to check if a value is nil.
+// It handles nil pointers, interfaces, slices, maps, and channels.
+//
+//	gt.Nil(t, nil)
+//	gt.Nil(t, (*int)(nil))
+//	gt.Nil(t, []int(nil))
+//	gt.Nil(t, map[string]int(nil))
+//	gt.Nil(t, chan int(nil))
 func Nil(t testing.TB, actual any) {
 	t.Helper()
 	if !isNil(actual) {
@@ -50,6 +58,12 @@ func Nil(t testing.TB, actual any) {
 	}
 }
 
+// NotNil is a helper function to check if a value is not nil.
+// It handles nil pointers, interfaces, slices, maps, and channels.
+//
+//	gt.NotNil(t, 1)
+//	gt.NotNil(t, "not nil")
+//	gt.NotNil(t, []int{1, 2, 3})
 func NotNil(t testing.TB, actual any) {
 	t.Helper()
 	if isNil(actual) {

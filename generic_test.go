@@ -16,6 +16,26 @@ func TestNil(t *testing.T) {
 			input: v,
 			pass:  true,
 		},
+		"nil_pass_pointer": {
+			input: (*int)(nil),
+			pass:  true,
+		},
+		"nil_pass_interface": {
+			input: (any)(nil),
+			pass:  true,
+		},
+		"nil_pass_slice": {
+			input: []int(nil),
+			pass:  true,
+		},
+		"nil_pass_map": {
+			input: map[string]int(nil),
+			pass:  true,
+		},
+		"nil_pass_channel": {
+			input: (chan int)(nil),
+			pass:  true,
+		},
 		"nil_fail": {
 			input: "not nil",
 			pass:  false,
@@ -42,6 +62,22 @@ func TestNotNil(t *testing.T) {
 		"not_nil_pass": {
 			input: "not nil",
 			pass:  true,
+		},
+		"not_nil_pass_pointer": {
+			input: (*int)(nil),
+			pass:  false,
+		},
+		"not_nil_pass_interface": {
+			input: (any)(nil),
+			pass:  false,
+		},
+		"not_nil_pass_slice": {
+			input: []int(nil),
+			pass:  false,
+		},
+		"not_nil_pass_map": {
+			input: map[string]int(nil),
+			pass:  false,
 		},
 		"not_nil_fail": {
 			input: v,
