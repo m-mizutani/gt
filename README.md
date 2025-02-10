@@ -121,6 +121,14 @@ u2 := gt.Cast[*user](t, v).NotNil() // Pass
 gt.Value(t, u2.Name).Equal("blue")       // Pass
 ```
 
+### Nil
+
+```go
+gt.Nil(t, nil)
+gt.Nil(t, (*int)(nil))
+gt.Nil(t, []int(nil))
+```
+
 ## License
 
 Apache License 2.0
