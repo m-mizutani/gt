@@ -2,6 +2,7 @@ package gt
 
 import (
 	"errors"
+	"strings"
 	"testing"
 )
 
@@ -79,5 +80,17 @@ func (x NoErrorTest) Must() {
 	x.t.Helper()
 	if x.actual != nil {
 		x.t.FailNow()
+	}
+}
+
+// Contains checks if the error message contains the expected substring.
+func (x ErrorTest) Contains(substr string) {
+	x.t.Helper()
+	if x.actual == nil {
+		x.t.Errorf("expected error containing %q, but got no error", substr)
+		return
+	}
+	if msg := x.actual.Error(); !strings.Contains(msg, substr) {
+		x.t.Errorf("expected error message containing %q, but got %q", substr, msg)
 	}
 }

@@ -37,3 +37,31 @@ func TestErrorAs(t *testing.T) {
 		t.Errorf("callback must be called once, but %+v times", called)
 	}
 }
+
+func TestErrorContains(t *testing.T) {
+	t.Run("error contains expected string", func(t *testing.T) {
+		err := errors.New("test error message")
+		cnt := newRecorder()
+		gt.Error(cnt, err).Contains("error message")
+		if cnt.errs > 0 {
+			t.Error("error test has unexpected result")
+		}
+	})
+
+	t.Run("error does not contain expected string", func(t *testing.T) {
+		err := errors.New("test error message")
+		cnt := newRecorder()
+		gt.Error(cnt, err).Contains("unexpected message")
+		if cnt.errs == 0 {
+			t.Error("error test should report error")
+		}
+	})
+
+	t.Run("nil error", func(t *testing.T) {
+		cnt := newRecorder()
+		gt.Error(cnt, nil).Contains("any message")
+		if cnt.errs == 0 {
+			t.Error("error test should report error for nil error")
+		}
+	})
+}
