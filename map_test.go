@@ -140,110 +140,110 @@ func TestMap(t *testing.T) {
 			},
 		},
 
-		"HaveKey": {
+		"HasKey": {
 			"pass": {
 				test: func(mt gt.MapTest[string, int]) {
-					mt.HaveKey("white")
+					mt.HasKey("white")
 				},
 				pass: true,
 			},
 			"fail": {
 				test: func(mt gt.MapTest[string, int]) {
-					mt.HaveKey("orange")
+					mt.HasKey("orange")
 				},
 				pass: false,
 			},
 		},
-		"NotHaveKey": {
+		"NotHasKey": {
 			"pass": {
 				test: func(mt gt.MapTest[string, int]) {
-					mt.NotHaveKey("orange")
+					mt.NotHasKey("orange")
 				},
 				pass: true,
 			},
 			"fail": {
 				test: func(mt gt.MapTest[string, int]) {
-					mt.NotHaveKey("white")
+					mt.NotHasKey("white")
 				},
 				pass: false,
 			},
 		},
-		"HaveValue": {
+		"HasValue": {
 			"pass": {
 				test: func(mt gt.MapTest[string, int]) {
-					mt.HaveValue(5)
+					mt.HasValue(5)
 				},
 				pass: true,
 			},
 			"fail": {
 				test: func(mt gt.MapTest[string, int]) {
-					mt.HaveValue(0)
+					mt.HasValue(0)
 				},
 				pass: false,
 			},
 		},
-		"NotHaveValue": {
+		"NotHasValue": {
 			"pass": {
 				test: func(mt gt.MapTest[string, int]) {
-					mt.NotHaveValue(0)
+					mt.NotHasValue(0)
 				},
 				pass: true,
 			},
 			"fail": {
 				test: func(mt gt.MapTest[string, int]) {
-					mt.NotHaveValue(5)
+					mt.NotHasValue(5)
 				},
 				pass: false,
 			},
 		},
-		"HaveKeyValue": {
+		"HasKeyValue": {
 			"pass": {
 				test: func(mt gt.MapTest[string, int]) {
-					mt.HaveKeyValue("blue", 5)
+					mt.HasKeyValue("blue", 5)
 				},
 				pass: true,
 			},
 			"fail_no_key": {
 				test: func(mt gt.MapTest[string, int]) {
-					mt.HaveKeyValue("orange", 5)
+					mt.HasKeyValue("orange", 5)
 				},
 				pass: false,
 			},
 			"fail_no_value": {
 				test: func(mt gt.MapTest[string, int]) {
-					mt.HaveKeyValue("blue", 0)
+					mt.HasKeyValue("blue", 0)
 				},
 				pass: false,
 			},
 			"fail_no_key_value": {
 				test: func(mt gt.MapTest[string, int]) {
-					mt.HaveKeyValue("orange", 0)
+					mt.HasKeyValue("orange", 0)
 				},
 				pass: false,
 			},
 		},
-		"NotHaveKeyValue": {
+		"NotHasKeyValue": {
 			"fail": {
 				test: func(mt gt.MapTest[string, int]) {
-					mt.NotHaveKeyValue("blue", 5)
+					mt.NotHasKeyValue("blue", 5)
 				},
 				pass: false,
 			},
 			"pass_no_key": {
 				test: func(mt gt.MapTest[string, int]) {
-					mt.NotHaveKeyValue("orange", 5)
+					mt.NotHasKeyValue("orange", 5)
 				},
 				pass: true,
 			},
 			"pass_no_value": {
 				test: func(mt gt.MapTest[string, int]) {
-					mt.NotHaveKeyValue("blue", 0)
+					mt.NotHasKeyValue("blue", 0)
 				},
 				pass: true,
 			},
 			"pass_no_key_value": {
 				test: func(mt gt.MapTest[string, int]) {
-					mt.NotHaveKeyValue("orange", 0)
+					mt.NotHasKeyValue("orange", 0)
 				},
 				pass: true,
 			},

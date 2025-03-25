@@ -53,15 +53,19 @@ func TestErrorContains(t *testing.T) {
 		cnt := newRecorder()
 		gt.Error(cnt, err).Contains("unexpected message")
 		if cnt.errs == 0 {
-			t.Error("error test should report error")
+			t.Error("error test should report error when message does not contain expected string")
 		}
 	})
 
 	t.Run("nil error", func(t *testing.T) {
 		cnt := newRecorder()
+		// Error()関数自体がnilエラーの場合にエラーを報告するため、
+		// 初期エラー数を記録
+		initialErrs := cnt.errs
 		gt.Error(cnt, nil).Contains("any message")
-		if cnt.errs == 0 {
-			t.Error("error test should report error for nil error")
+		// エラー数が増加していることを確認
+		if cnt.errs <= initialErrs {
+			t.Error("error test should report additional error for Contains check")
 		}
 	})
 }

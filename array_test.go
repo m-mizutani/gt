@@ -135,25 +135,25 @@ func TestArray(t *testing.T) {
 		"Contain": {
 			"pass (prefix)": {
 				test: func(arr gt.ArrayTest[string]) {
-					arr.Contain([]string{"blue", "orange"})
+					arr.Contains([]string{"blue", "orange"})
 				},
 				pass: true,
 			},
 			"pass (middle)": {
 				test: func(arr gt.ArrayTest[string]) {
-					arr.Contain([]string{"orange"})
+					arr.Contains([]string{"orange"})
 				},
 				pass: true,
 			},
 			"pass (suffix)": {
 				test: func(arr gt.ArrayTest[string]) {
-					arr.Contain([]string{"orange", "red"})
+					arr.Contains([]string{"orange", "red"})
 				},
 				pass: true,
 			},
 			"fail": {
 				test: func(arr gt.ArrayTest[string]) {
-					arr.Contain([]string{"orange", "blue"})
+					arr.Contains([]string{"orange", "blue"})
 				},
 				pass: false,
 			},
@@ -161,25 +161,25 @@ func TestArray(t *testing.T) {
 		"NotContain": {
 			"fail (prefix)": {
 				test: func(arr gt.ArrayTest[string]) {
-					arr.NotContain([]string{"blue", "orange"})
+					arr.NotContains([]string{"blue", "orange"})
 				},
 				pass: false,
 			},
 			"fail (middle)": {
 				test: func(arr gt.ArrayTest[string]) {
-					arr.NotContain([]string{"orange"})
+					arr.NotContains([]string{"orange"})
 				},
 				pass: false,
 			},
 			"fail (suffix)": {
 				test: func(arr gt.ArrayTest[string]) {
-					arr.NotContain([]string{"orange", "red"})
+					arr.NotContains([]string{"orange", "red"})
 				},
 				pass: false,
 			},
 			"pass": {
 				test: func(arr gt.ArrayTest[string]) {
-					arr.NotContain([]string{"orange", "blue"})
+					arr.NotContains([]string{"orange", "blue"})
 				},
 				pass: true,
 			},
@@ -187,13 +187,13 @@ func TestArray(t *testing.T) {
 		"Have": {
 			"pass": {
 				test: func(arr gt.ArrayTest[string]) {
-					arr.Have("blue")
+					arr.Has("blue")
 				},
 				pass: true,
 			},
 			"fail": {
 				test: func(arr gt.ArrayTest[string]) {
-					arr.Have("yellow")
+					arr.Has("yellow")
 				},
 				pass: false,
 			},
@@ -201,13 +201,13 @@ func TestArray(t *testing.T) {
 		"NotHave": {
 			"fail": {
 				test: func(arr gt.ArrayTest[string]) {
-					arr.NotHave("blue")
+					arr.NotHas("blue")
 				},
 				pass: false,
 			},
 			"pass": {
 				test: func(arr gt.ArrayTest[string]) {
-					arr.NotHave("yellow")
+					arr.NotHas("yellow")
 				},
 				pass: true,
 			},
@@ -308,7 +308,7 @@ func TestArray(t *testing.T) {
 			for title, tc := range cases {
 				t.Run(title, func(t *testing.T) {
 					r := newRecorder()
-					mt := gt.A(r, target)
+					mt := gt.Array(r, target)
 					tc.test(mt)
 
 					if tc.pass != (r.errs == 0) {
@@ -324,7 +324,7 @@ func TestArrayDistinct(t *testing.T) {
 	target := []string{"blue", "orange", "red", "blue"}
 
 	r := newRecorder()
-	mt := gt.A(r, target)
+	mt := gt.Array(r, target)
 	mt.Distinct()
 
 	if r.errs == 0 {
@@ -335,12 +335,12 @@ func TestArrayDistinct(t *testing.T) {
 func TestArrayExample1(t *testing.T) {
 	data := []int{1, 2, 3}
 
-	gt.A(t, data).
-		Have(1).
-		NotHave(4).
-		Contain([]int{1, 2}).
-		Contain([]int{2, 3}).
-		NotContain([]int{1, 3}).
+	gt.Array(t, data).
+		Has(1).
+		NotHas(4).
+		Contains([]int{1, 2}).
+		Contains([]int{2, 3}).
+		NotContains([]int{1, 3}).
 		Equal([]int{1, 2, 3}).
 		NotEqual([]int{1, 2, 3, 4}).
 		NotEqual([]int{0, 1, 2}).
@@ -373,15 +373,15 @@ func TestArrayExample2(t *testing.T) {
 	unorderedUsers := gt.R1(GetUsers(ctx)).NoError(t)
 
 	gt.Array(t, unorderedUsers).
-		Have(&user{
+		Has(&user{
 			ID:   1000,
 			Name: "Alice",
 		}).
-		Have(&user{
+		Has(&user{
 			ID:   1024,
 			Name: "Bob",
 		}).
-		NotHave(&user{
+		NotHas(&user{
 			ID:   9999,
 			Name: "TestUser",
 		}).
@@ -393,7 +393,7 @@ func TestMatchThen(t *testing.T) {
 		testData := []int{1, 2, 3}
 		called := false
 		r := newRecorder()
-		arrayTest := gt.A(r, testData)
+		arrayTest := gt.Array(r, testData)
 
 		arrayTest.MatchThen(func(v int) bool {
 			return v == 2
@@ -414,7 +414,7 @@ func TestMatchThen(t *testing.T) {
 		called := false
 		mockT := &testing.T{}
 
-		arrayTest := gt.A(mockT, testData)
+		arrayTest := gt.Array(mockT, testData)
 
 		arrayTest.MatchThen(func(v int) bool {
 			return v == 4

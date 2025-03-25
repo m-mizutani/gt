@@ -90,7 +90,7 @@ func (x ArrayTest[T]) NotEqualAt(idx int, expect T) ArrayTest[T] {
 	return x
 }
 
-func (x ArrayTest[T]) have(expect T) bool {
+func (x ArrayTest[T]) has(expect T) bool {
 	x.t.Helper()
 
 	for i := range x.actual {
@@ -102,33 +102,33 @@ func (x ArrayTest[T]) have(expect T) bool {
 	return false
 }
 
-// Have check if actual has an expect element
+// Has check if actual has an expect element
 //
 //	v := []int{1, 2, 3, 5}
-//	gt.Array(t, v).Have(5)) // Pass
-//	gt.Array(t, v).Have(4)) // Fail
-func (x ArrayTest[T]) Have(expect T) ArrayTest[T] {
+//	gt.Array(t, v).Has(5)) // Pass
+//	gt.Array(t, v).Has(4)) // Fail
+func (x ArrayTest[T]) Has(expect T) ArrayTest[T] {
 	x.t.Helper()
-	if !x.have(expect) {
+	if !x.has(expect) {
 		x.t.Errorf("%+v expects to have %+v, but not contains", x.actual, expect)
 	}
 	return x
 }
 
-// NotHave check if actual does not have an expect element
+// NotHas check if actual does not have an expect element
 //
 //	v := []int{1, 2, 3, 5}
-//	gt.Array(t, v).Have(5)) // Fail
-//	gt.Array(t, v).Have(4)) // Pass
-func (x ArrayTest[T]) NotHave(expect T) ArrayTest[T] {
+//	gt.Array(t, v).NotHas(5)) // Fail
+//	gt.Array(t, v).NotHas(4)) // Pass
+func (x ArrayTest[T]) NotHas(expect T) ArrayTest[T] {
 	x.t.Helper()
-	if x.have(expect) {
+	if x.has(expect) {
 		x.t.Errorf("%+v does not expects to have %+v, but contains", x.actual, expect)
 	}
 	return x
 }
 
-func (x ArrayTest[T]) contain(expect []T) bool {
+func (x ArrayTest[T]) contains(expect []T) bool {
 	x.t.Helper()
 
 	check := func(i int) bool {
@@ -150,27 +150,27 @@ func (x ArrayTest[T]) contain(expect []T) bool {
 	return false
 }
 
-// Contain check if actual has expect as sub sequence.
+// Contains check if actual has expect as sub sequence.
 //
 //	v := []int{1, 2, 3, 5}
-//	gt.Array(t, v).Contain([]int{1, 2, 3})) // Pass
-//	gt.Array(t, v).Contain([]int{1, 2, 5})) // Fail
-func (x ArrayTest[T]) Contain(expect []T) ArrayTest[T] {
+//	gt.Array(t, v).Contains([]int{1, 2, 3})) // Pass
+//	gt.Array(t, v).Contains([]int{1, 2, 5})) // Fail
+func (x ArrayTest[T]) Contains(expect []T) ArrayTest[T] {
 	x.t.Helper()
-	if !x.contain(expect) {
+	if !x.contains(expect) {
 		x.t.Errorf("%+v expects to have %+v, but not contains", x.actual, expect)
 	}
 	return x
 }
 
-// NotContain check if actual does not have expect as sub sequence.
+// NotContains check if actual does not have expect as sub sequence.
 //
 //	v := []int{1, 2, 3, 5}
-//	gt.Array(t, v).NotContain([]int{1, 2, 3})) // Fail
-//	gt.Array(t, v).NotContain([]int{1, 2, 5})) // Pass
-func (x ArrayTest[T]) NotContain(expect []T) ArrayTest[T] {
+//	gt.Array(t, v).NotContains([]int{1, 2, 3})) // Fail
+//	gt.Array(t, v).NotContains([]int{1, 2, 5})) // Pass
+func (x ArrayTest[T]) NotContains(expect []T) ArrayTest[T] {
 	x.t.Helper()
-	if x.contain(expect) {
+	if x.contains(expect) {
 		x.t.Errorf("%+v expects to have %+v, but not contains", x.actual, expect)
 	}
 	return x
