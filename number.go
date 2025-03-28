@@ -116,8 +116,8 @@ func (x NumberTest[T]) LessOrEqual(expect T) NumberTest[T] {
 	return x
 }
 
-// Must check if error has occurred in previous test. If errors will occur in following test, it immediately stop test by t.FailNow().
-func (x NumberTest[T]) Must() NumberTest[T] {
+// Required check if error has occurred in previous test. If errors will occur in following test, it immediately stop test by t.FailNow().
+func (x NumberTest[T]) Required() NumberTest[T] {
 	x.t.Helper()
 	x.t = newErrorWithFail(x.t)
 	return x

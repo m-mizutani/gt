@@ -23,8 +23,8 @@ func Error(t testing.TB, actual error) ErrorTest {
 	}
 }
 
-// Must checks if error has occurred in previous test. If errors will occur in following test, it immediately stop test by t.FailNow().
-func (x ErrorTest) Must() ErrorTest {
+// Required checks if error has occurred in previous test. If errors will occur in following test, it immediately stop test by t.FailNow().
+func (x ErrorTest) Required() ErrorTest {
 	x.t.Helper()
 	if x.actual == nil {
 		x.t.FailNow()
@@ -76,7 +76,7 @@ func NoError(t testing.TB, actual error) NoErrorTest {
 	}
 }
 
-func (x NoErrorTest) Must() {
+func (x NoErrorTest) Required() {
 	x.t.Helper()
 	if x.actual != nil {
 		x.t.FailNow()

@@ -250,16 +250,16 @@ func (x MapTest[K, V]) Length(expect int) MapTest[K, V] {
 	return x
 }
 
-// Must check if error has occurred in previous test. If errors will occur in following test, it immediately stop test by t.Failed().
+// Required check if error has occurred in previous test. If errors will occur in following test, it immediately stop test by t.Failed().
 //
 //	m := map[string]int{
 //		"blue": 5,
 //	}
-//	gt.Must().Map(t, m).
+//	gt.Map(t, m).Required().
 //		HasKey("blue", 0).      // <- fail
 //		HasKey("blue", 5).      // <- will not be tested
 //	gt.Map(t, m).HasKey("blue") // <- will not be tested
-func (x MapTest[K, V]) Must() MapTest[K, V] {
+func (x MapTest[K, V]) Required() MapTest[K, V] {
 	x.t.Helper()
 	x.t = newErrorWithFail(x.t)
 	return x
