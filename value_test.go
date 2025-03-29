@@ -204,26 +204,26 @@ func TestValueNotNil(t *testing.T) {
 	}
 }
 
-func TestValueMust(t *testing.T) {
+func TestValueRequired(t *testing.T) {
 	r := newRecorder()
-	gt.Value(r, 1).Must().Equal(2)
-
-	if r.errs != 1 {
-		t.Errorf("Error should be called once: %d times", r.errs)
-	}
-	if r.fails != 1 {
-		t.Errorf("FailNow should be called once: %d times", r.fails)
-	}
-}
-
-func TestValueMust_not_called(t *testing.T) {
-	r := newRecorder()
-	gt.Value(r, 1).Equal(2).Must()
+	gt.Value(r, 1).Required().Equal(2)
 
 	if r.errs != 1 {
 		t.Errorf("Error should be called once: %d times", r.errs)
 	}
 	if r.fails != 0 {
+		t.Errorf("FailNow should be called once: %d times", r.fails)
+	}
+}
+
+func TestValueRequired_not_called(t *testing.T) {
+	r := newRecorder()
+	gt.Value(r, 1).Equal(2).Required()
+
+	if r.errs != 1 {
+		t.Errorf("Error should be called once: %d times", r.errs)
+	}
+	if r.fails != 1 {
 		t.Errorf("FailNow should be called once: %d times", r.fails)
 	}
 }

@@ -86,3 +86,10 @@ func (x FileTest) Reader(f func(testing.TB, io.Reader)) FileTest {
 	f(x.t, r)
 	return x
 }
+
+// Required check if error has occurred in previous test. If errors has been occurred in previous test, it immediately stop test by t.FailNow().
+func (x FileTest) Required() FileTest {
+	x.t.Helper()
+	required(x.t)
+	return x
+}
