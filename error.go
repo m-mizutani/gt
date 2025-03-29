@@ -23,12 +23,10 @@ func Error(t testing.TB, actual error) ErrorTest {
 	}
 }
 
-// Required checks if error has occurred in previous test. If errors will occur in following test, it immediately stop test by t.FailNow().
+// Required checks if error has occurred in previous test. If errors has been occurred in previous test, it immediately stop test by t.FailNow().
 func (x ErrorTest) Required() ErrorTest {
 	x.t.Helper()
-	if x.actual == nil {
-		x.t.FailNow()
-	}
+	required(x.t)
 	return x
 }
 

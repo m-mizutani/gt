@@ -7,6 +7,12 @@ type BoolTest struct {
 	actual bool
 }
 
+func (x BoolTest) Required() BoolTest {
+	x.t.Helper()
+	required(x.t)
+	return x
+}
+
 func Bool(t testing.TB, actual bool) BoolTest {
 	return BoolTest{
 		t:      t,

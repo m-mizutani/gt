@@ -5,6 +5,7 @@ import (
 	"os"
 	"reflect"
 	"strings"
+	"testing"
 
 	"github.com/google/go-cmp/cmp"
 )
@@ -74,4 +75,11 @@ var Diff = func(expect, actual any) string {
 
 var DumpError = func(err error) string {
 	return err.Error()
+}
+
+func required(t testing.TB) {
+	t.Helper()
+	if t.Failed() {
+		t.FailNow()
+	}
 }

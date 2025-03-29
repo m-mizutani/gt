@@ -104,12 +104,12 @@ func (x ValueTest[T]) In(expects ...T) ValueTest[T] {
 	return x
 }
 
-// Required check if error has occurred in previous test. If errors will occur in following test, it immediately stop test by t.Failed().
+// Required check if error has occurred in previous test. If errors has been occurred in previous test, it immediately stop test by t.Failed().
 //
 //	name := "Alice"
 //	gt.Value(t, name).Equal("Bob").Required() // Test will stop here
 func (x ValueTest[T]) Required() ValueTest[T] {
 	x.t.Helper()
-	x.t = newErrorWithFail(x.t)
+	required(x.t)
 	return x
 }

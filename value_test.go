@@ -211,7 +211,7 @@ func TestValueRequired(t *testing.T) {
 	if r.errs != 1 {
 		t.Errorf("Error should be called once: %d times", r.errs)
 	}
-	if r.fails != 1 {
+	if r.fails != 0 {
 		t.Errorf("FailNow should be called once: %d times", r.fails)
 	}
 }
@@ -223,7 +223,7 @@ func TestValueRequired_not_called(t *testing.T) {
 	if r.errs != 1 {
 		t.Errorf("Error should be called once: %d times", r.errs)
 	}
-	if r.fails != 0 {
+	if r.fails != 1 {
 		t.Errorf("FailNow should be called once: %d times", r.fails)
 	}
 }

@@ -250,7 +250,7 @@ func (x MapTest[K, V]) Length(expect int) MapTest[K, V] {
 	return x
 }
 
-// Required check if error has occurred in previous test. If errors will occur in following test, it immediately stop test by t.Failed().
+// Required check if error has occurred in previous test. If errors has been occurred in previous test, it immediately stop test by t.Failed().
 //
 //	m := map[string]int{
 //		"blue": 5,

@@ -214,10 +214,10 @@ func (x ArrayTest[T]) Less(expect int) ArrayTest[T] {
 	return x
 }
 
-// Required check if error has occurred in previous test. If errors will occur in following test, it immediately stop test by t.FailNow().
+// Required check if error has occurred in previous test. If errors has been occurred in previous test, it immediately stop test by t.FailNow().
 func (x ArrayTest[T]) Required() ArrayTest[T] {
 	x.t.Helper()
-	x.t = newErrorWithFail(x.t)
+	required(x.t)
 	return x
 }
 
