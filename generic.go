@@ -1,17 +1,37 @@
 package gt
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
 
 type baseTest[T any] struct {
-	t testing.TB
+	t           testing.TB
+	description string
+}
+
+// Describe sets a description for the test. The description will be displayed when the test fails.
+//
+//	gt.Value(t, actual).Describe("User ID should match expected value").Equal(expected)
+func (x baseTest[T]) Describe(description string) baseTest[T] {
+	x.t.Helper()
+	x.description = description
+	return x
+}
+
+// Describef sets a formatted description for the test. The description will be displayed when the test fails.
+//
+//	gt.Array(t, items).Describef("Array should contain %d items for user %s", 5, "Alice").Length(5)
+func (x baseTest[T]) Describef(format string, args ...any) baseTest[T] {
+	x.t.Helper()
+	x.description = fmt.Sprintf(format, args...)
+	return x
 }
 
 func (x baseTest[T]) Required() baseTest[T] {
 	x.t.Helper()
-	required(x.t)
+	requiredWithDescription(x.t, x.description)
 	return x
 }
 

@@ -1,6 +1,7 @@
 package gt
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -12,8 +13,9 @@ type number interface {
 }
 
 type NumberTest[T number] struct {
-	actual T
-	t      testing.TB
+	actual      T
+	t           testing.TB
+	description string
 }
 
 // Number provides NumberTest that has not only Value test methods but also large-small comparison methods
@@ -31,6 +33,26 @@ func N[T number](t testing.TB, actual T) NumberTest[T] {
 	return Number(t, actual)
 }
 
+// Describe sets a description for the test. The description will be displayed when the test fails.
+//
+//	n := 2
+//	gt.Number(t, n).Describe("Number should match expected value").Equal(2)
+func (x NumberTest[T]) Describe(description string) NumberTest[T] {
+	x.t.Helper()
+	x.description = description
+	return x
+}
+
+// Describef sets a formatted description for the test. The description will be displayed when the test fails.
+//
+//	n := 2
+//	gt.Number(t, n).Describef("Number should be %d for calculation", 2).Equal(2)
+func (x NumberTest[T]) Describef(format string, args ...any) NumberTest[T] {
+	x.t.Helper()
+	x.description = fmt.Sprintf(format, args...)
+	return x
+}
+
 // Equal checks if expect equals given actual value.
 //
 //	n := 2
@@ -38,7 +60,8 @@ func N[T number](t testing.TB, actual T) NumberTest[T] {
 func (x NumberTest[T]) Equal(expect T) NumberTest[T] {
 	x.t.Helper()
 	if x.actual != expect {
-		x.t.Error("numbers are not matched\n" + Diff(expect, x.actual))
+		msg := "numbers are not matched\n" + Diff(expect, x.actual)
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 
 	return x
@@ -52,7 +75,8 @@ func (x NumberTest[T]) Equal(expect T) NumberTest[T] {
 func (x NumberTest[T]) NotEqual(expect T) NumberTest[T] {
 	x.t.Helper()
 	if x.actual == expect {
-		x.t.Errorf("numbers should not be matched, %+v", x.actual)
+		msg := fmt.Sprintf("numbers should not be matched, %+v", x.actual)
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 
 	return x
@@ -66,7 +90,8 @@ func (x NumberTest[T]) NotEqual(expect T) NumberTest[T] {
 func (x NumberTest[T]) Greater(expect T) NumberTest[T] {
 	x.t.Helper()
 	if !(expect < x.actual) {
-		x.t.Errorf("got %+v, want grater than %+v", x.actual, expect)
+		msg := fmt.Sprintf("got %+v, want grater than %+v", x.actual, expect)
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 
 	return x
@@ -81,7 +106,8 @@ func (x NumberTest[T]) Greater(expect T) NumberTest[T] {
 func (x NumberTest[T]) GreaterOrEqual(expect T) NumberTest[T] {
 	x.t.Helper()
 	if !(expect <= x.actual) {
-		x.t.Errorf("got %+v, want greater than or equal %+v", x.actual, expect)
+		msg := fmt.Sprintf("got %+v, want greater than or equal %+v", x.actual, expect)
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 
 	return x
@@ -95,7 +121,8 @@ func (x NumberTest[T]) GreaterOrEqual(expect T) NumberTest[T] {
 func (x NumberTest[T]) Less(expect T) NumberTest[T] {
 	x.t.Helper()
 	if !(x.actual < expect) {
-		x.t.Errorf("got %+v, want less than %+v", x.actual, expect)
+		msg := fmt.Sprintf("got %+v, want less than %+v", x.actual, expect)
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 
 	return x
@@ -110,7 +137,8 @@ func (x NumberTest[T]) Less(expect T) NumberTest[T] {
 func (x NumberTest[T]) LessOrEqual(expect T) NumberTest[T] {
 	x.t.Helper()
 	if !(x.actual <= expect) {
-		x.t.Errorf("got %+v, want less than or equal %+v", x.actual, expect)
+		msg := fmt.Sprintf("got %+v, want less than or equal %+v", x.actual, expect)
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 
 	return x
@@ -119,6 +147,6 @@ func (x NumberTest[T]) LessOrEqual(expect T) NumberTest[T] {
 // Required check if error has occurred in previous test. If errors has been occurred in previous test, it immediately stop test by t.FailNow().
 func (x NumberTest[T]) Required() NumberTest[T] {
 	x.t.Helper()
-	required(x.t)
+	requiredWithDescription(x.t, x.description)
 	return x
 }

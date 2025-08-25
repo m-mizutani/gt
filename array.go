@@ -1,10 +1,14 @@
 package gt
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 type ArrayTest[T any] struct {
-	actual []T
-	t      testing.TB
+	actual      []T
+	t           testing.TB
+	description string
 }
 
 // Array provides ArrayTest that has not only Value test methods but also array (slice) comparison methods
@@ -22,6 +26,24 @@ func A[T any](t testing.TB, actual []T) ArrayTest[T] {
 	return Array(t, actual)
 }
 
+// Describe sets a description for the test. The description will be displayed when the test fails.
+//
+//	gt.Array(t, items).Describe("Array should contain expected items").Equal(expected)
+func (x ArrayTest[T]) Describe(description string) ArrayTest[T] {
+	x.t.Helper()
+	x.description = description
+	return x
+}
+
+// Describef sets a formatted description for the test. The description will be displayed when the test fails.
+//
+//	gt.Array(t, items).Describef("Array should contain %d items for user %s", 5, "Alice").Length(5)
+func (x ArrayTest[T]) Describef(format string, args ...any) ArrayTest[T] {
+	x.t.Helper()
+	x.description = fmt.Sprintf(format, args...)
+	return x
+}
+
 // Equal check if actual does not equals with expect. Default evaluation function uses reflect.DeepEqual.
 //
 //	v := []int{1, 2, 3, 5}
@@ -31,7 +53,8 @@ func (x ArrayTest[T]) Equal(expect []T) ArrayTest[T] {
 	x.t.Helper()
 
 	if !EvalCompare(x.actual, expect) {
-		x.t.Errorf("arrays are not matched\n" + Diff(x.actual, expect))
+		msg := "arrays are not matched\n" + Diff(x.actual, expect)
+		x.t.Error(formatErrorMessage(x.description, msg))
 		return x
 	}
 
@@ -47,7 +70,8 @@ func (x ArrayTest[T]) NotEqual(expect []T) ArrayTest[T] {
 	x.t.Helper()
 
 	if EvalCompare(x.actual, expect) {
-		x.t.Errorf("arrays should not be matched, %+v", x.actual)
+		msg := fmt.Sprintf("arrays should not be matched, %+v", x.actual)
+		x.t.Error(formatErrorMessage(x.description, msg))
 		return x
 	}
 
@@ -64,9 +88,11 @@ func (x ArrayTest[T]) EqualAt(idx int, expect T) ArrayTest[T] {
 	x.t.Helper()
 
 	if idx < 0 || len(x.actual) <= idx {
-		x.t.Errorf("array length is %d, then %d is out of range", len(x.actual), idx)
+		msg := fmt.Sprintf("array length is %d, then %d is out of range", len(x.actual), idx)
+		x.t.Error(formatErrorMessage(x.description, msg))
 	} else if !EvalCompare(x.actual[idx], expect) {
-		x.t.Errorf("array[%d] is expected %+v, but actual is %+v", idx, expect, x.actual[idx])
+		msg := fmt.Sprintf("array[%d] is expected %+v, but actual is %+v", idx, expect, x.actual[idx])
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 
 	return x
@@ -82,9 +108,11 @@ func (x ArrayTest[T]) NotEqualAt(idx int, expect T) ArrayTest[T] {
 	x.t.Helper()
 
 	if idx < 0 || len(x.actual) <= idx {
-		x.t.Errorf("array length is %d, then %d is out of range", len(x.actual), idx)
+		msg := fmt.Sprintf("array length is %d, then %d is out of range", len(x.actual), idx)
+		x.t.Error(formatErrorMessage(x.description, msg))
 	} else if EvalCompare(x.actual[idx], expect) {
-		x.t.Errorf("array[%d] is not expected %+v, but actual is %+v", idx, expect, x.actual[idx])
+		msg := fmt.Sprintf("array[%d] is not expected %+v, but actual is %+v", idx, expect, x.actual[idx])
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 
 	return x
@@ -110,7 +138,8 @@ func (x ArrayTest[T]) has(expect T) bool {
 func (x ArrayTest[T]) Has(expect T) ArrayTest[T] {
 	x.t.Helper()
 	if !x.has(expect) {
-		x.t.Errorf("%+v expects to have %+v, but not contains", x.actual, expect)
+		msg := fmt.Sprintf("%+v expects to have %+v, but not contains", x.actual, expect)
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 	return x
 }
@@ -123,7 +152,8 @@ func (x ArrayTest[T]) Has(expect T) ArrayTest[T] {
 func (x ArrayTest[T]) NotHas(expect T) ArrayTest[T] {
 	x.t.Helper()
 	if x.has(expect) {
-		x.t.Errorf("%+v does not expects to have %+v, but contains", x.actual, expect)
+		msg := fmt.Sprintf("%+v does not expects to have %+v, but contains", x.actual, expect)
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 	return x
 }
@@ -158,7 +188,8 @@ func (x ArrayTest[T]) contains(expect []T) bool {
 func (x ArrayTest[T]) Contains(expect []T) ArrayTest[T] {
 	x.t.Helper()
 	if !x.contains(expect) {
-		x.t.Errorf("%+v expects to have %+v, but not contains", x.actual, expect)
+		msg := fmt.Sprintf("%+v expects to have %+v, but not contains", x.actual, expect)
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 	return x
 }
@@ -171,7 +202,8 @@ func (x ArrayTest[T]) Contains(expect []T) ArrayTest[T] {
 func (x ArrayTest[T]) NotContains(expect []T) ArrayTest[T] {
 	x.t.Helper()
 	if x.contains(expect) {
-		x.t.Errorf("%+v expects to have %+v, but not contains", x.actual, expect)
+		msg := fmt.Sprintf("%+v expects to have %+v, but not contains", x.actual, expect)
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 	return x
 }
@@ -183,7 +215,8 @@ func (x ArrayTest[T]) NotContains(expect []T) ArrayTest[T] {
 func (x ArrayTest[T]) Length(expect int) ArrayTest[T] {
 	x.t.Helper()
 	if len(x.actual) != expect {
-		x.t.Errorf("array length is expected to be %d, but actual is %d", expect, len(x.actual))
+		msg := fmt.Sprintf("array length is expected to be %d, but actual is %d", expect, len(x.actual))
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 	return x
 }
@@ -196,7 +229,8 @@ func (x ArrayTest[T]) Length(expect int) ArrayTest[T] {
 func (x ArrayTest[T]) Longer(expect int) ArrayTest[T] {
 	x.t.Helper()
 	if !(expect < len(x.actual)) {
-		x.t.Errorf("array length is expected to be longer than %d, but actual is %d", expect, len(x.actual))
+		msg := fmt.Sprintf("array length is expected to be longer than %d, but actual is %d", expect, len(x.actual))
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 	return x
 }
@@ -209,7 +243,8 @@ func (x ArrayTest[T]) Longer(expect int) ArrayTest[T] {
 func (x ArrayTest[T]) Less(expect int) ArrayTest[T] {
 	x.t.Helper()
 	if !(len(x.actual) < expect) {
-		x.t.Errorf("array length is expected to be shorter than %d, but actual is %d", expect, len(x.actual))
+		msg := fmt.Sprintf("array length is expected to be shorter than %d, but actual is %d", expect, len(x.actual))
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 	return x
 }
@@ -217,7 +252,7 @@ func (x ArrayTest[T]) Less(expect int) ArrayTest[T] {
 // Required check if error has occurred in previous test. If errors has been occurred in previous test, it immediately stop test by t.FailNow().
 func (x ArrayTest[T]) Required() ArrayTest[T] {
 	x.t.Helper()
-	required(x.t)
+	requiredWithDescription(x.t, x.description)
 	return x
 }
 
@@ -231,7 +266,8 @@ func (x ArrayTest[T]) At(idx int, f func(t testing.TB, v T)) ArrayTest[T] {
 	x.t.Helper()
 
 	if idx < 0 || len(x.actual) <= idx {
-		x.t.Errorf("array length is %d, then %d is out of range", len(x.actual), idx)
+		msg := fmt.Sprintf("array length is %d, then %d is out of range", len(x.actual), idx)
+		x.t.Error(formatErrorMessage(x.description, msg))
 	} else {
 		f(x.t, x.actual[idx])
 	}
@@ -256,7 +292,8 @@ func (x ArrayTest[T]) Any(f func(v T) bool) ArrayTest[T] {
 			return x
 		}
 	}
-	x.t.Errorf("no matched elements in array")
+	msg := "no matched elements in array"
+	x.t.Error(formatErrorMessage(x.description, msg))
 
 	return x
 }
@@ -275,7 +312,8 @@ func (x ArrayTest[T]) All(f func(v T) bool) ArrayTest[T] {
 
 	for i := range x.actual {
 		if !f(x.actual[i]) {
-			x.t.Errorf("unmatched element found in array: %+v", x.actual[i])
+			msg := fmt.Sprintf("unmatched element found in array: %+v", x.actual[i])
+			x.t.Error(formatErrorMessage(x.description, msg))
 			return x
 		}
 	}
@@ -292,7 +330,8 @@ func (x ArrayTest[T]) Distinct() ArrayTest[T] {
 	for i := range x.actual {
 		for j := i + 1; j < len(x.actual); j++ {
 			if EvalCompare(x.actual[i], x.actual[j]) {
-				x.t.Errorf("array[%d] and array[%d] are not distinct (%+v)", i, j, x.actual[i])
+				msg := fmt.Sprintf("array[%d] and array[%d] are not distinct (%+v)", i, j, x.actual[i])
+				x.t.Error(formatErrorMessage(x.description, msg))
 				return x
 			}
 		}
@@ -332,6 +371,7 @@ func (x ArrayTest[T]) MatchThen(match func(v T) bool, then func(t testing.TB, v 
 		}
 	}
 
-	x.t.Errorf("no matched elements in array")
+	msg := "no matched elements in array"
+	x.t.Error(formatErrorMessage(x.description, msg))
 	return x
 }
