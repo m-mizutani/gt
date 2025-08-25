@@ -1,20 +1,21 @@
 package gt
 
 import (
+	"fmt"
 	"testing"
 )
 
 type ValueTest[T any] struct {
+	TestMeta
 	actual T
-	t      testing.TB
 }
 
 // Value provides ValueTest that has basic comparison methods
 func Value[T any](t testing.TB, actual T) ValueTest[T] {
 	t.Helper()
 	return ValueTest[T]{
-		actual: actual,
-		t:      t,
+		TestMeta: TestMeta{t: t},
+		actual:   actual,
 	}
 }
 
@@ -22,6 +23,22 @@ func Value[T any](t testing.TB, actual T) ValueTest[T] {
 func V[T any](t testing.TB, actual T) ValueTest[T] {
 	t.Helper()
 	return Value(t, actual)
+}
+
+// Describe sets a description for the test. The description will be displayed when the test fails.
+//
+//	gt.Value(t, actual).Describe("User ID should match expected value").Equal(expected)
+func (x ValueTest[T]) Describe(description string) ValueTest[T] {
+	x.setDesc(description)
+	return x
+}
+
+// Describef sets a formatted description for the test. The description will be displayed when the test fails.
+//
+//	gt.Value(t, user.ID).Describef("User ID should be %d for user %s", 123, user.Name).Equal(123)
+func (x ValueTest[T]) Describef(format string, args ...any) ValueTest[T] {
+	x.setDescf(format, args...)
+	return x
 }
 
 // Equal check if actual equals with expect. Default evaluation function uses reflect.DeepEqual.
@@ -35,7 +52,8 @@ func V[T any](t testing.TB, actual T) ValueTest[T] {
 func (x ValueTest[T]) Equal(expect T) ValueTest[T] {
 	x.t.Helper()
 	if !EvalCompare(x.actual, expect) {
-		x.t.Error("values are not matched\n" + Diff(expect, x.actual))
+		msg := "values are not matched\n" + Diff(expect, x.actual)
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 
 	return x
@@ -52,7 +70,8 @@ func (x ValueTest[T]) Equal(expect T) ValueTest[T] {
 func (x ValueTest[T]) NotEqual(expect T) ValueTest[T] {
 	x.t.Helper()
 	if EvalCompare(x.actual, expect) {
-		x.t.Errorf("values should not be matched, %+v", x.actual)
+		msg := fmt.Sprintf("values should not be matched, %+v", x.actual)
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 
 	return x
@@ -68,7 +87,8 @@ func (x ValueTest[T]) Nil() ValueTest[T] {
 	x.t.Helper()
 
 	if !EvalIsNil(x.actual) {
-		x.t.Errorf("expected nil, but got %+v (%T)", x.actual, x.actual)
+		msg := fmt.Sprintf("expected nil, but got %+v (%T)", x.actual, x.actual)
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 
 	return x
@@ -84,7 +104,8 @@ func (x ValueTest[T]) NotNil() ValueTest[T] {
 	x.t.Helper()
 
 	if EvalIsNil(x.actual) {
-		x.t.Error("expected not nil, but got nil")
+		msg := "expected not nil, but got nil"
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 
 	return x
@@ -100,7 +121,8 @@ func (x ValueTest[T]) In(expects ...T) ValueTest[T] {
 		}
 	}
 
-	x.t.Errorf("values should be in %+v, but not found %+v", expects, x.actual)
+	msg := fmt.Sprintf("values should be in %+v, but not found %+v", expects, x.actual)
+	x.t.Error(formatErrorMessage(x.description, msg))
 	return x
 }
 
@@ -109,7 +131,6 @@ func (x ValueTest[T]) In(expects ...T) ValueTest[T] {
 //	name := "Alice"
 //	gt.Value(t, name).Equal("Bob").Required() // Test will stop here
 func (x ValueTest[T]) Required() ValueTest[T] {
-	x.t.Helper()
-	required(x.t)
+	x.requiredWithMeta()
 	return x
 }

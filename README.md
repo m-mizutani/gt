@@ -55,6 +55,40 @@ u1 := user{Name: "blue"}
 gt.Value(t, u1).Equal(user{Name:"blue"}) // Pass
 ```
 
+#### Test Descriptions
+
+All test types support `Describe()` and `Describef()` methods to add context to test failures:
+
+```go
+userID := 123
+expectedID := 456
+
+// Basic description
+gt.Value(t, userID).
+    Describe("User ID should match the expected value").
+    Equal(expectedID)
+
+// Formatted description
+gt.Value(t, userID).
+    Describef("User ID should be %d, but got %d", expectedID, userID).
+    Equal(expectedID)
+```
+
+Error output with description:
+```
+User ID should be 456, but got 123
+values are not matched
+actual: 123
+expect: 456
+```
+
+Error output without description:
+```
+values are not matched
+actual: 123
+expect: 456
+```
+
 ### Number
 
 Accepts only number types: `int`, `uint`, `int64`, `float64`, etc.

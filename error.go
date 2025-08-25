@@ -2,12 +2,13 @@ package gt
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 	"testing"
 )
 
 type ErrorTest struct {
-	t      testing.TB
+	TestMeta
 	actual error
 }
 
@@ -18,15 +19,26 @@ func Error(t testing.TB, actual error) ErrorTest {
 		t.Errorf("expected error, but got no error")
 	}
 	return ErrorTest{
-		t:      t,
-		actual: actual,
+		TestMeta: TestMeta{t: t},
+		actual:   actual,
 	}
 }
 
 // Required checks if error has occurred in previous test. If errors has been occurred in previous test, it immediately stop test by t.FailNow().
+// Describe sets a description for the test. The description will be displayed when the test fails.
+func (x ErrorTest) Describe(description string) ErrorTest {
+	x.setDesc(description)
+	return x
+}
+
+// Describef sets a formatted description for the test. The description will be displayed when the test fails.
+func (x ErrorTest) Describef(format string, args ...any) ErrorTest {
+	x.setDescf(format, args...)
+	return x
+}
+
 func (x ErrorTest) Required() ErrorTest {
-	x.t.Helper()
-	required(x.t)
+	x.requiredWithMeta()
 	return x
 }
 
@@ -34,7 +46,8 @@ func (x ErrorTest) Required() ErrorTest {
 func (x ErrorTest) Is(expected error) {
 	x.t.Helper()
 	if x.actual != nil && !errors.Is(x.actual, expected) {
-		x.t.Errorf("expected %T, but not got from %T", expected, x.actual)
+		msg := fmt.Sprintf("expected %T, but not got from %T", expected, x.actual)
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 }
 
@@ -42,7 +55,8 @@ func (x ErrorTest) Is(expected error) {
 func (x ErrorTest) IsNot(expected error) {
 	x.t.Helper()
 	if x.actual != nil && errors.Is(x.actual, expected) {
-		x.t.Errorf("not expected %T, but got from %T", expected, x.actual)
+		msg := fmt.Sprintf("not expected %T, but got from %T", expected, x.actual)
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 }
 
@@ -85,10 +99,12 @@ func (x NoErrorTest) Required() {
 func (x ErrorTest) Contains(substr string) {
 	x.t.Helper()
 	if x.actual == nil {
-		x.t.Errorf("expected error containing %q, but got no error", substr)
+		msg := fmt.Sprintf("expected error containing %q, but got no error", substr)
+		x.t.Error(formatErrorMessage(x.description, msg))
 		return
 	}
 	if msg := x.actual.Error(); !strings.Contains(msg, substr) {
-		x.t.Errorf("expected error message containing %q, but got %q", substr, msg)
+		msgText := fmt.Sprintf("expected error message containing %q, but got %q", substr, msg)
+		x.t.Error(formatErrorMessage(x.description, msgText))
 	}
 }

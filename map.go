@@ -1,10 +1,13 @@
 package gt
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 type MapTest[K comparable, V any] struct {
+	TestMeta
 	actual map[K]V
-	t      testing.TB
 }
 
 // Map provides MapTest that has not only Value test methods but also key-value test
@@ -16,8 +19,8 @@ type MapTest[K comparable, V any] struct {
 func Map[K comparable, V any](t testing.TB, actual map[K]V) MapTest[K, V] {
 	t.Helper()
 	return MapTest[K, V]{
-		actual: actual,
-		t:      t,
+		TestMeta: TestMeta{t: t},
+		actual:   actual,
 	}
 }
 
@@ -32,6 +35,28 @@ func M[K comparable, V any](t testing.TB, actual map[K]V) MapTest[K, V] {
 	return Map(t, actual)
 }
 
+// Describe sets a description for the test. The description will be displayed when the test fails.
+//
+//	m := map[string]int{
+//		"blue": 5,
+//	}
+//	gt.Map(t, m).Describe("Map should contain expected key-value pairs").HasKey("blue")
+func (x MapTest[K, V]) Describe(description string) MapTest[K, V] {
+	x.setDesc(description)
+	return x
+}
+
+// Describef sets a formatted description for the test. The description will be displayed when the test fails.
+//
+//	m := map[string]int{
+//		"blue": 5,
+//	}
+//	gt.Map(t, m).Describef("Map should contain key %s with value %d", "blue", 5).HasKeyValue("blue", 5)
+func (x MapTest[K, V]) Describef(format string, args ...any) MapTest[K, V] {
+	x.setDescf(format, args...)
+	return x
+}
+
 // Equal checks if expect completely equals given actual map.
 //
 //	m := map[string]int{
@@ -43,7 +68,8 @@ func (x MapTest[K, V]) Equal(expect map[K]V) MapTest[K, V] {
 	x.t.Helper()
 
 	if !EvalCompare(x.actual, expect) {
-		x.t.Error("maps are not matched\n" + Diff(expect, x.actual))
+		msg := "maps are not matched\n" + Diff(expect, x.actual)
+		x.t.Error(formatErrorMessage(x.description, msg))
 		return x
 	}
 
@@ -66,7 +92,8 @@ func (x MapTest[K, V]) NotEqual(expect map[K]V) MapTest[K, V] {
 	x.t.Helper()
 
 	if EvalCompare(x.actual, expect) {
-		x.t.Errorf("maps should not be matched, %+v", x.actual)
+		msg := fmt.Sprintf("maps should not be matched, %+v", x.actual)
+		x.t.Error(formatErrorMessage(x.description, msg))
 		return x
 	}
 
@@ -85,9 +112,11 @@ func (x MapTest[K, V]) EqualAt(key K, expect V) MapTest[K, V] {
 	x.t.Helper()
 
 	if v, ok := x.actual[key]; !ok {
-		x.t.Errorf("key '%+v' is not found in the map", key)
+		msg := fmt.Sprintf("key '%+v' is not found in the map", key)
+		x.t.Error(formatErrorMessage(x.description, msg))
 	} else if !EvalCompare(v, expect) {
-		x.t.Errorf("map[%+v] is expected %+v, but actual is %+v", key, expect, v)
+		msg := fmt.Sprintf("map[%+v] is expected %+v, but actual is %+v", key, expect, v)
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 
 	return x
@@ -105,9 +134,11 @@ func (x MapTest[K, V]) NotEqualAt(key K, expect V) MapTest[K, V] {
 	x.t.Helper()
 
 	if v, ok := x.actual[key]; !ok {
-		x.t.Errorf("key '%+v' is not found in the map", key)
+		msg := fmt.Sprintf("key '%+v' is not found in the map", key)
+		x.t.Error(formatErrorMessage(x.description, msg))
 	} else if EvalCompare(v, expect) {
-		x.t.Errorf("map[%+v] is expected %+v, but actual is %+v", key, expect, v)
+		msg := fmt.Sprintf("map[%+v] is expected %+v, but actual is %+v", key, expect, v)
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 
 	return x
@@ -124,7 +155,8 @@ func (x MapTest[K, V]) HasKey(expect K) MapTest[K, V] {
 	x.t.Helper()
 
 	if _, ok := x.actual[expect]; !ok {
-		x.t.Errorf("expected to contain the key '%+v', but not got", expect)
+		msg := fmt.Sprintf("expected to contain the key '%+v', but not got", expect)
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 
 	return x
@@ -141,7 +173,8 @@ func (x MapTest[K, V]) NotHasKey(expect K) MapTest[K, V] {
 	x.t.Helper()
 
 	if _, ok := x.actual[expect]; ok {
-		x.t.Error("expected not to contain the key, but got")
+		msg := "expected not to contain the key, but got"
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 
 	return x
@@ -163,7 +196,8 @@ func (x MapTest[K, V]) HasValue(expect V) MapTest[K, V] {
 		}
 	}
 
-	x.t.Errorf("expected to contain the value '%+v', but not got", expect)
+	msg := fmt.Sprintf("expected to contain the value '%+v', but not got", expect)
+	x.t.Error(formatErrorMessage(x.description, msg))
 	return x
 }
 
@@ -179,7 +213,8 @@ func (x MapTest[K, V]) NotHasValue(expect V) MapTest[K, V] {
 
 	for i := range x.actual {
 		if EvalCompare(x.actual[i], expect) {
-			x.t.Error("expected not contain, but got the value")
+			msg := "expected not contain, but got the value"
+			x.t.Error(formatErrorMessage(x.description, msg))
 			break
 		}
 	}
@@ -211,7 +246,8 @@ func (x MapTest[K, V]) HasKeyValue(expectKey K, expectValue V) MapTest[K, V] {
 	x.t.Helper()
 
 	if !x.hasKeyValue(expectKey, expectValue) {
-		x.t.Errorf("expected to contain (%+v, %+v), but not contain", expectKey, expectValue)
+		msg := fmt.Sprintf("expected to contain (%+v, %+v), but not contain", expectKey, expectValue)
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 	return x
 }
@@ -228,7 +264,8 @@ func (x MapTest[K, V]) NotHasKeyValue(expectKey K, expectValue V) MapTest[K, V] 
 	x.t.Helper()
 
 	if x.hasKeyValue(expectKey, expectValue) {
-		x.t.Errorf("expected not to contain (%+v, %+v), but contained", expectKey, expectValue)
+		msg := fmt.Sprintf("expected not to contain (%+v, %+v), but contained", expectKey, expectValue)
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 
 	return x
@@ -245,7 +282,8 @@ func (x MapTest[K, V]) NotHasKeyValue(expectKey K, expectValue V) MapTest[K, V] 
 func (x MapTest[K, V]) Length(expect int) MapTest[K, V] {
 	x.t.Helper()
 	if len(x.actual) != expect {
-		x.t.Error("got non expected length")
+		msg := fmt.Sprintf("map length is expected to be %d, but actual is %d", expect, len(x.actual))
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 	return x
 }
@@ -260,8 +298,7 @@ func (x MapTest[K, V]) Length(expect int) MapTest[K, V] {
 //		HasKey("blue", 5).      // <- will not be tested
 //	gt.Map(t, m).HasKey("blue") // <- will not be tested
 func (x MapTest[K, V]) Required() MapTest[K, V] {
-	x.t.Helper()
-	x.t = newErrorWithFail(x.t)
+	x.requiredWithMeta()
 	return x
 }
 
@@ -277,7 +314,8 @@ func (x MapTest[K, V]) At(key K, f func(t testing.TB, v V)) MapTest[K, V] {
 	x.t.Helper()
 
 	if v, ok := x.actual[key]; !ok {
-		x.t.Errorf("key '%+v' is not found in the map", key)
+		msg := fmt.Sprintf("key '%+v' is not found in the map", key)
+		x.t.Error(formatErrorMessage(x.description, msg))
 	} else {
 		f(x.t, v)
 	}

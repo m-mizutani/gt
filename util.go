@@ -83,3 +83,20 @@ func required(t testing.TB) {
 		t.FailNow()
 	}
 }
+
+func requiredWithDescription(t testing.TB, description string) {
+	t.Helper()
+	if t.Failed() {
+		if description != "" {
+			t.Errorf("%s\nPrevious test failed", description)
+		}
+		t.FailNow()
+	}
+}
+
+func formatErrorMessage(description, originalMessage string) string {
+	if description == "" {
+		return originalMessage
+	}
+	return fmt.Sprintf("%s\n%s", description, originalMessage)
+}
