@@ -6,17 +6,16 @@ import (
 )
 
 type ValueTest[T any] struct {
-	actual      T
-	t           testing.TB
-	description string
+	TestMeta
+	actual T
 }
 
 // Value provides ValueTest that has basic comparison methods
 func Value[T any](t testing.TB, actual T) ValueTest[T] {
 	t.Helper()
 	return ValueTest[T]{
-		actual: actual,
-		t:      t,
+		TestMeta: TestMeta{t: t},
+		actual:   actual,
 	}
 }
 
@@ -30,8 +29,7 @@ func V[T any](t testing.TB, actual T) ValueTest[T] {
 //
 //	gt.Value(t, actual).Describe("User ID should match expected value").Equal(expected)
 func (x ValueTest[T]) Describe(description string) ValueTest[T] {
-	x.t.Helper()
-	x.description = description
+	x.setDesc(description)
 	return x
 }
 
@@ -39,8 +37,7 @@ func (x ValueTest[T]) Describe(description string) ValueTest[T] {
 //
 //	gt.Value(t, user.ID).Describef("User ID should be %d for user %s", 123, user.Name).Equal(123)
 func (x ValueTest[T]) Describef(format string, args ...any) ValueTest[T] {
-	x.t.Helper()
-	x.description = fmt.Sprintf(format, args...)
+	x.setDescf(format, args...)
 	return x
 }
 
@@ -134,7 +131,6 @@ func (x ValueTest[T]) In(expects ...T) ValueTest[T] {
 //	name := "Alice"
 //	gt.Value(t, name).Equal("Bob").Required() // Test will stop here
 func (x ValueTest[T]) Required() ValueTest[T] {
-	x.t.Helper()
-	requiredWithDescription(x.t, x.description)
+	x.requiredWithMeta()
 	return x
 }

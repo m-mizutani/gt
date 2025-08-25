@@ -8,17 +8,16 @@ import (
 )
 
 type StringTest struct {
-	actual      string
-	t           testing.TB
-	description string
+	TestMeta
+	actual string
 }
 
 // String provides StringTest that has basic comparison methods
 func String(t testing.TB, actual string) StringTest {
 	t.Helper()
 	return StringTest{
-		actual: actual,
-		t:      t,
+		TestMeta: TestMeta{t: t},
+		actual:   actual,
 	}
 }
 
@@ -32,8 +31,7 @@ func S(t testing.TB, actual string) StringTest {
 //
 //	gt.String(t, actual).Describe("Username should match expected value").Equal(expected)
 func (x StringTest) Describe(description string) StringTest {
-	x.t.Helper()
-	x.description = description
+	x.setDesc(description)
 	return x
 }
 
@@ -41,15 +39,13 @@ func (x StringTest) Describe(description string) StringTest {
 //
 //	gt.String(t, actual).Describef("Username should match %s for user %s", expected, "Alice").Equal(expected)
 func (x StringTest) Describef(format string, args ...any) StringTest {
-	x.t.Helper()
-	x.description = fmt.Sprintf(format, args...)
+	x.setDescf(format, args...)
 	return x
 }
 
 // Required check if error has occurred in previous test. If errors has been occurred in previous test, it immediately stop test by t.FailNow().
 func (x StringTest) Required() StringTest {
-	x.t.Helper()
-	requiredWithDescription(x.t, x.description)
+	x.requiredWithMeta()
 	return x
 }
 

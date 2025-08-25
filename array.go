@@ -6,17 +6,16 @@ import (
 )
 
 type ArrayTest[T any] struct {
-	actual      []T
-	t           testing.TB
-	description string
+	TestMeta
+	actual []T
 }
 
 // Array provides ArrayTest that has not only Value test methods but also array (slice) comparison methods
 func Array[T any](t testing.TB, actual []T) ArrayTest[T] {
 	t.Helper()
 	return ArrayTest[T]{
-		actual: actual,
-		t:      t,
+		TestMeta: TestMeta{t: t},
+		actual:   actual,
 	}
 }
 
@@ -30,8 +29,7 @@ func A[T any](t testing.TB, actual []T) ArrayTest[T] {
 //
 //	gt.Array(t, items).Describe("Array should contain expected items").Equal(expected)
 func (x ArrayTest[T]) Describe(description string) ArrayTest[T] {
-	x.t.Helper()
-	x.description = description
+	x.setDesc(description)
 	return x
 }
 
@@ -39,8 +37,7 @@ func (x ArrayTest[T]) Describe(description string) ArrayTest[T] {
 //
 //	gt.Array(t, items).Describef("Array should contain %d items for user %s", 5, "Alice").Length(5)
 func (x ArrayTest[T]) Describef(format string, args ...any) ArrayTest[T] {
-	x.t.Helper()
-	x.description = fmt.Sprintf(format, args...)
+	x.setDescf(format, args...)
 	return x
 }
 
@@ -251,8 +248,7 @@ func (x ArrayTest[T]) Less(expect int) ArrayTest[T] {
 
 // Required check if error has occurred in previous test. If errors has been occurred in previous test, it immediately stop test by t.FailNow().
 func (x ArrayTest[T]) Required() ArrayTest[T] {
-	x.t.Helper()
-	requiredWithDescription(x.t, x.description)
+	x.requiredWithMeta()
 	return x
 }
 

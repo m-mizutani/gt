@@ -6,9 +6,8 @@ import (
 )
 
 type MapTest[K comparable, V any] struct {
-	actual      map[K]V
-	t           testing.TB
-	description string
+	TestMeta
+	actual map[K]V
 }
 
 // Map provides MapTest that has not only Value test methods but also key-value test
@@ -20,8 +19,8 @@ type MapTest[K comparable, V any] struct {
 func Map[K comparable, V any](t testing.TB, actual map[K]V) MapTest[K, V] {
 	t.Helper()
 	return MapTest[K, V]{
-		actual: actual,
-		t:      t,
+		TestMeta: TestMeta{t: t},
+		actual:   actual,
 	}
 }
 
@@ -43,8 +42,7 @@ func M[K comparable, V any](t testing.TB, actual map[K]V) MapTest[K, V] {
 //	}
 //	gt.Map(t, m).Describe("Map should contain expected key-value pairs").HasKey("blue")
 func (x MapTest[K, V]) Describe(description string) MapTest[K, V] {
-	x.t.Helper()
-	x.description = description
+	x.setDesc(description)
 	return x
 }
 
@@ -55,8 +53,7 @@ func (x MapTest[K, V]) Describe(description string) MapTest[K, V] {
 //	}
 //	gt.Map(t, m).Describef("Map should contain key %s with value %d", "blue", 5).HasKeyValue("blue", 5)
 func (x MapTest[K, V]) Describef(format string, args ...any) MapTest[K, V] {
-	x.t.Helper()
-	x.description = fmt.Sprintf(format, args...)
+	x.setDescf(format, args...)
 	return x
 }
 
@@ -301,8 +298,7 @@ func (x MapTest[K, V]) Length(expect int) MapTest[K, V] {
 //		HasKey("blue", 5).      // <- will not be tested
 //	gt.Map(t, m).HasKey("blue") // <- will not be tested
 func (x MapTest[K, V]) Required() MapTest[K, V] {
-	x.t.Helper()
-	requiredWithDescription(x.t, x.description)
+	x.requiredWithMeta()
 	return x
 }
 

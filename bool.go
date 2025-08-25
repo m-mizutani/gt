@@ -3,20 +3,20 @@ package gt
 import "testing"
 
 type BoolTest struct {
-	t      testing.TB
+	TestMeta
 	actual bool
 }
 
 func (x BoolTest) Required() BoolTest {
-	x.t.Helper()
-	required(x.t)
+	x.requiredWithMeta()
 	return x
 }
 
 func Bool(t testing.TB, actual bool) BoolTest {
+	t.Helper()
 	return BoolTest{
-		t:      t,
-		actual: actual,
+		TestMeta: TestMeta{t: t},
+		actual:   actual,
 	}
 }
 
@@ -24,10 +24,23 @@ func B(t testing.TB, actual bool) BoolTest {
 	return Bool(t, actual)
 }
 
+// Describe sets a description for the test. The description will be displayed when the test fails.
+func (x BoolTest) Describe(description string) BoolTest {
+	x.setDesc(description)
+	return x
+}
+
+// Describef sets a formatted description for the test. The description will be displayed when the test fails.
+func (x BoolTest) Describef(format string, args ...any) BoolTest {
+	x.setDescf(format, args...)
+	return x
+}
+
 func (x BoolTest) True() BoolTest {
 	x.t.Helper()
 	if !x.actual {
-		x.t.Error("expected true, but false")
+		msg := "expected true, but false"
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 	return x
 }
@@ -35,7 +48,8 @@ func (x BoolTest) True() BoolTest {
 func (x BoolTest) False() BoolTest {
 	x.t.Helper()
 	if x.actual {
-		x.t.Error("expected false, but true")
+		msg := "expected false, but true"
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 	return x
 }

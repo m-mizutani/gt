@@ -28,16 +28,16 @@ func TestArrayTest_BasicDescribe(t *testing.T) {
 	// Test that Describe methods exist and can be called
 	arr := []int{1, 2, 3}
 	result := gt.Array(t, arr).Describe("Test array description")
-	// Just test that we can call the method without error - result should not be nil
-	_ = result
+	// Verify the method returns a valid ArrayTest instance by checking we can chain methods
+	result.Length(3) // This should pass without error
 }
 
 func TestArrayTest_BasicDescribef(t *testing.T) {
 	// Test that Describef methods exist and can be called
 	arr := []string{"a", "b"}
 	result := gt.Array(t, arr).Describef("Array with %d items", len(arr))
-	// Just test that we can call the method without error - result should not be nil
-	_ = result
+	// Verify the method returns a valid ArrayTest instance by checking we can chain methods
+	result.Length(2) // This should pass without error
 }
 
 // Test method chaining works
@@ -58,7 +58,7 @@ func TestSuccessfulOperations_WithDescribe(t *testing.T) {
 	// These should all pass without any errors
 	gt.Value(t, 42).Describe("Number test").Equal(42)
 	gt.Array(t, []int{1, 2, 3}).Describef("Array of %d elements", 3).Length(3)
-	
+
 	// Test with different types
 	gt.Value(t, "hello").Describe("String test").Equal("hello")
 	gt.Value(t, true).Describef("Boolean test: %v", true).Equal(true)
@@ -77,7 +77,7 @@ func TestRequired_MethodChaining(t *testing.T) {
 // Test Describe with long text (basic test for functionality)
 func TestLongDescription_Basic(t *testing.T) {
 	longDescription := "This is a very long description that contains more than 80 characters to test how the Describe functionality handles longer text inputs that might need special formatting in error messages."
-	
+
 	// This should pass, just testing that long descriptions don't break anything
 	gt.Value(t, "value").
 		Describe(longDescription).

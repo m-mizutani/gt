@@ -1,22 +1,23 @@
 package gt
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"testing"
 )
 
 type FileTest struct {
+	TestMeta
 	path string
-	t    testing.TB
 }
 
 // File provides FileTest that has basic comparison methods
 func File(t testing.TB, path string) FileTest {
 	t.Helper()
 	return FileTest{
-		path: path,
-		t:    t,
+		TestMeta: TestMeta{t: t},
+		path:     path,
 	}
 }
 
@@ -26,6 +27,18 @@ func F(t testing.TB, path string) FileTest {
 	return File(t, path)
 }
 
+// Describe sets a description for the test. The description will be displayed when the test fails.
+func (x FileTest) Describe(description string) FileTest {
+	x.setDesc(description)
+	return x
+}
+
+// Describef sets a formatted description for the test. The description will be displayed when the test fails.
+func (x FileTest) Describef(format string, args ...any) FileTest {
+	x.setDescf(format, args...)
+	return x
+}
+
 // Exists check if file exists
 //
 //	gt.File(t, "testdata/file.txt").Exists() // Pass
@@ -33,7 +46,8 @@ func F(t testing.TB, path string) FileTest {
 func (x FileTest) Exists() FileTest {
 	x.t.Helper()
 	if !EvalFileExists(x.path) {
-		x.t.Errorf("file should exist, %s", x.path)
+		msg := fmt.Sprintf("file should exist, %s", x.path)
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 
 	return x
@@ -46,7 +60,8 @@ func (x FileTest) Exists() FileTest {
 func (x FileTest) NotExists() FileTest {
 	x.t.Helper()
 	if EvalFileExists(x.path) {
-		x.t.Errorf("file should not exist, %s", x.path)
+		msg := fmt.Sprintf("file should not exist, %s", x.path)
+		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 
 	return x
@@ -61,7 +76,8 @@ func (x FileTest) String(f func(t testing.TB, s string)) FileTest {
 	x.t.Helper()
 	data, err := os.ReadFile(x.path)
 	if err != nil {
-		x.t.Errorf("failed to read file, %s", x.path)
+		msg := fmt.Sprintf("failed to read file, %s", x.path)
+		x.t.Error(formatErrorMessage(x.description, msg))
 		return x
 	}
 
@@ -78,7 +94,8 @@ func (x FileTest) Reader(f func(testing.TB, io.Reader)) FileTest {
 	x.t.Helper()
 	r, err := os.Open(x.path)
 	if err != nil {
-		x.t.Errorf("failed to open file, %s", x.path)
+		msg := fmt.Sprintf("failed to open file, %s", x.path)
+		x.t.Error(formatErrorMessage(x.description, msg))
 		return x
 	}
 	defer r.Close()
@@ -89,7 +106,6 @@ func (x FileTest) Reader(f func(testing.TB, io.Reader)) FileTest {
 
 // Required check if error has occurred in previous test. If errors has been occurred in previous test, it immediately stop test by t.FailNow().
 func (x FileTest) Required() FileTest {
-	x.t.Helper()
-	required(x.t)
+	x.requiredWithMeta()
 	return x
 }

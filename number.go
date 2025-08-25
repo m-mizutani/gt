@@ -13,17 +13,16 @@ type number interface {
 }
 
 type NumberTest[T number] struct {
-	actual      T
-	t           testing.TB
-	description string
+	TestMeta
+	actual T
 }
 
 // Number provides NumberTest that has not only Value test methods but also large-small comparison methods
 func Number[T number](t testing.TB, actual T) NumberTest[T] {
 	t.Helper()
 	return NumberTest[T]{
-		actual: actual,
-		t:      t,
+		TestMeta: TestMeta{t: t},
+		actual:   actual,
 	}
 }
 
@@ -38,8 +37,7 @@ func N[T number](t testing.TB, actual T) NumberTest[T] {
 //	n := 2
 //	gt.Number(t, n).Describe("Number should match expected value").Equal(2)
 func (x NumberTest[T]) Describe(description string) NumberTest[T] {
-	x.t.Helper()
-	x.description = description
+	x.setDesc(description)
 	return x
 }
 
@@ -48,8 +46,7 @@ func (x NumberTest[T]) Describe(description string) NumberTest[T] {
 //	n := 2
 //	gt.Number(t, n).Describef("Number should be %d for calculation", 2).Equal(2)
 func (x NumberTest[T]) Describef(format string, args ...any) NumberTest[T] {
-	x.t.Helper()
-	x.description = fmt.Sprintf(format, args...)
+	x.setDescf(format, args...)
 	return x
 }
 
@@ -146,7 +143,6 @@ func (x NumberTest[T]) LessOrEqual(expect T) NumberTest[T] {
 
 // Required check if error has occurred in previous test. If errors has been occurred in previous test, it immediately stop test by t.FailNow().
 func (x NumberTest[T]) Required() NumberTest[T] {
-	x.t.Helper()
-	requiredWithDescription(x.t, x.description)
+	x.requiredWithMeta()
 	return x
 }
