@@ -117,12 +117,12 @@ func ExpectError(t testing.TB, expected bool, err error) {
 	t.Helper()
 
 	if expected {
-		// エラーを期待している場合
+		// Error is expected
 		if err == nil {
 			t.Error("expected error, but got no error")
 		}
 	} else {
-		// エラーを期待していない場合
+		// No error is expected
 		if err != nil {
 			t.Errorf("expected no error, but got error: %v", err)
 		}

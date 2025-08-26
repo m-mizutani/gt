@@ -130,38 +130,29 @@ func TestExpectError(t *testing.T) {
 }
 
 func TestExpectErrorMessages(t *testing.T) {
-	t.Run("expected error but got none", func(t *testing.T) {
-		r := newRecorder()
-		gt.ExpectError(r, true, nil)
-
+	checkErrorMessage := func(t *testing.T, r *recorder, expectedMsg string) {
 		if r.errs == 0 {
 			t.Error("expected test to fail")
 		}
-		expectedMsg := "expected error, but got no error"
-		if len(r.msgs) == 0 || r.msgs[len(r.msgs)-1] != expectedMsg {
-			var actualMsg string
-			if len(r.msgs) > 0 {
-				actualMsg = r.msgs[len(r.msgs)-1]
-			}
+		var actualMsg string
+		if len(r.msgs) > 0 {
+			actualMsg = r.msgs[len(r.msgs)-1]
+		}
+		if actualMsg != expectedMsg {
 			t.Errorf("expected message %q, got %q", expectedMsg, actualMsg)
 		}
+	}
+
+	t.Run("expected error but got none", func(t *testing.T) {
+		r := newRecorder()
+		gt.ExpectError(r, true, nil)
+		checkErrorMessage(t, r, "expected error, but got no error")
 	})
 
 	t.Run("expected no error but got error", func(t *testing.T) {
 		r := newRecorder()
 		testErr := errors.New("test error")
 		gt.ExpectError(r, false, testErr)
-
-		if r.errs == 0 {
-			t.Error("expected test to fail")
-		}
-		expectedMsg := "expected no error, but got error: test error"
-		if len(r.msgs) == 0 || r.msgs[len(r.msgs)-1] != expectedMsg {
-			var actualMsg string
-			if len(r.msgs) > 0 {
-				actualMsg = r.msgs[len(r.msgs)-1]
-			}
-			t.Errorf("expected message %q, got %q", expectedMsg, actualMsg)
-		}
+		checkErrorMessage(t, r, "expected no error, but got error: test error")
 	})
 }
