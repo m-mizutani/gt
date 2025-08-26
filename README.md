@@ -155,12 +155,97 @@ u2 := gt.Cast[*user](t, v).NotNil() // Pass
 gt.Value(t, u2.Name).Equal("blue")       // Pass
 ```
 
+### Bool
+
+```go
+gt.Bool(t, true).True()   // Pass
+gt.Bool(t, false).False() // Pass
+gt.Bool(t, true).False()  // Fail
+
+// Sugar syntax
+gt.True(t, true)          // Pass
+gt.False(t, false)        // Pass
+```
+
+### String
+
+```go
+name := "Alice"
+gt.String(t, name).
+    Equal("Alice").           // Pass
+    IsNotEmpty().             // Pass
+    Contains("lic").          // Pass
+    HasPrefix("Al").          // Pass
+    HasSuffix("ce").          // Pass
+    Match(`^A\w+e$`)          // Pass (regex)
+
+// Sugar syntax
+gt.S(t, name).Equal("Alice")
+```
+
+### Error
+
+Error testing with specialized methods:
+
+```go
+err := errors.New("test error")
+gt.Error(t, err).
+    Is(errors.New("test error")).  // Check error equality
+    Contains("test")               // Check error message contains substring
+
+// NoError for functions that should succeed
+gt.NoError(t, someFunc()).Required() // Fail fast if error occurs
+
+// ErrorAs for type checking
+var customErr *MyCustomError
+gt.ErrorAs(t, err, func(e *MyCustomError) {
+    gt.Value(t, e.Code).Equal(404)
+})
+```
+
+### File
+
+File system testing:
+
+```go
+gt.File(t, "testdata/file.txt").
+    Exists().                      // Check file exists
+    String(func(t testing.TB, content string) {
+        gt.String(t, content).Contains("expected text")
+    })
+
+gt.File(t, "nonexistent.txt").NotExists() // Check file doesn't exist
+```
+
+### Return Values
+
+Test function return values with error handling:
+
+```go
+// Function returning (value, error)
+result := gt.Return1(myFunc()).NoError(t) // Get result if no error
+gt.Value(t, result).Equal("expected")
+
+// Function returning (val1, val2, error)
+val1, val2 := gt.Return2(myFunc2()).NoError(t)
+gt.Value(t, val1).Equal("expected1")
+gt.Value(t, val2).Equal("expected2")
+
+// Test error cases
+gt.Return1(myFailingFunc()).Error(t).Contains("expected error message")
+
+// Sugar syntax
+gt.R1(myFunc()).NoError(t)
+gt.R2(myFunc2()).NoError(t)
+```
+
 ### Nil
 
 ```go
 gt.Nil(t, nil)
 gt.Nil(t, (*int)(nil))
 gt.Nil(t, []int(nil))
+gt.NotNil(t, "not nil")
 ```
 
 ## License
