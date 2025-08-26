@@ -96,3 +96,35 @@ func NotNil(t testing.TB, actual any) {
 		t.Error("value should not be nil, but nil")
 	}
 }
+
+// ExpectError checks if an error occurrence matches the expectation.
+// If expected is true, the test passes when err is not nil.
+// If expected is false, the test passes when err is nil.
+//
+//	// Expect an error
+//	err := someFailingFunction()
+//	gt.ExpectError(t, true, err)  // Pass if err != nil
+//
+//	// Expect no error
+//	err := someSuccessFunction()
+//	gt.ExpectError(t, false, err) // Pass if err == nil
+//
+//	// Conditional error testing
+//	shouldFail := true
+//	err := conditionalFunction(shouldFail)
+//	gt.ExpectError(t, shouldFail, err)
+func ExpectError(t testing.TB, expected bool, err error) {
+	t.Helper()
+
+	if expected {
+		// Error is expected
+		if err == nil {
+			t.Error("expected error, but got no error")
+		}
+	} else {
+		// No error is expected
+		if err != nil {
+			t.Errorf("expected no error, but got error: %v", err)
+		}
+	}
+}
