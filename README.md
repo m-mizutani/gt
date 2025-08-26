@@ -38,6 +38,50 @@ In many cases, a developer does not care Go generics in using `gt`. However, a d
 
 See [reference](https://pkg.go.dev/github.com/m-mizutani/gt) for more detail.
 
+## Test Types Overview
+
+`gt` provides specialized test types for different kinds of data, each with type-safe methods:
+
+| Test Type | Constructor | Purpose | Key Methods |
+|-----------|-------------|---------|-------------|
+| **Value** | `gt.Value(t, v)` | Generic value testing | `Equal`, `NotEqual`, `Nil`, `NotNil` |
+| **Array** | `gt.Array(t, arr)` | Slice/array testing | `Has`, `Contains`, `Length`, `Any`, `All`, `Distinct` |
+| **Map** | `gt.Map(t, m)` | Map testing | `HasKey`, `HasValue`, `HasKeyValue`, `EqualAt` |
+| **Number** | `gt.Number(t, n)` | Numeric comparisons | `Greater`, `Less`, `GreaterOrEqual`, `LessOrEqual` |
+| **String** | `gt.String(t, s)` | String operations | `Contains`, `HasPrefix`, `HasSuffix`, `Match`, `IsEmpty` |
+| **Bool** | `gt.Bool(t, b)` | Boolean testing | `True`, `False` |
+| **Error** | `gt.Error(t, err)` | Error validation | `Is`, `Contains`, `As` |
+| **File** | `gt.File(t, path)` | File system testing | `Exists`, `NotExists`, `String` |
+| **Cast** | `gt.Cast[T](t, v)` | Type casting | Type-safe casting with `Nil`/`NotNil` |
+
+### Common Features
+
+All test types support:
+
+- **Fluent Interface**: Method chaining for readable test code
+- **Descriptions**: `Describe(msg)` and `Describef(format, args...)` for context
+- **Required Pattern**: `Required()` for fail-fast behavior
+- **Sugar Syntax**: Short aliases like `gt.A()` for `gt.Array()`, `gt.S()` for `gt.String()`
+- **Type Safety**: Compile-time type checking prevents type mismatches
+
+### Example Overview
+
+```go
+// All test types can be chained and described
+gt.Array(t, users).
+    Describe("User validation").
+    Required().
+    Length(3).
+    All(func(u User) bool { return u.ID > 0 })
+
+gt.Map(t, config).
+    Describef("Config for env %s", env).
+    HasKey("database").
+    At("database", func(t testing.TB, db string) {
+        gt.String(t, db).HasPrefix("postgres://")
+    })
+```
+
 ### Value
 
 Generic test type has a minimum set of test methods.
@@ -104,38 +148,109 @@ gt.Number(t, f).
 
 ### Array
 
-Accepts array of any type not only primitive type but also struct.
+Accepts array/slice of any type including primitive types and structs. Provides comprehensive testing methods for collections.
 
 ```go
 colors := []string{"red", "blue", "yellow"}
 
+// Basic equality and length
 gt.Array(t, colors).
-    Equal([]string{"red", "blue", "yellow"}) // Pass
-    Equal([]string{"red", "blue"})           // Fail
-    // Equal([]int{1, 2})                    // Compile error
-    Contain([]string{"red", "blue"})         // Pass
-    Has("yellow")                           // Pass
-    Length(3)                                // Pass
+    Equal([]string{"red", "blue", "yellow"}). // Pass
+    Length(3).                                // Pass
+    NotEqual([]string{"red", "blue"})         // Pass
 
-gt.Array(t, colors).Required().Has("orange") // Fail and stop test
+// Element checking
+gt.Array(t, colors).
+    Has("yellow").                            // Pass - contains element
+    NotHas("orange").                         // Pass - doesn't contain element
+    Contains([]string{"red", "blue"}).        // Pass - contains subsequence
+    NotContains([]string{"red", "yellow"})    // Pass - doesn't contain subsequence
+
+// Index-based operations
+gt.Array(t, colors).
+    EqualAt(0, "red").                        // Pass - check specific index
+    NotEqualAt(1, "yellow")                   // Pass
+
+// Length comparisons
+gt.Array(t, colors).
+    Longer(2).                                // Pass - length > 2
+    Less(5)                                   // Pass - length < 5
+
+// Advanced operations
+gt.Array(t, colors).
+    Distinct().                               // Pass - all elements unique
+    Any(func(v string) bool {                 // Pass - at least one matches
+        return v == "blue"
+    }).
+    All(func(v string) bool {                 // Pass - all elements match
+        return len(v) > 2
+    })
+
+// Test individual elements with callback
+gt.Array(t, colors).At(1, func(t testing.TB, v string) {
+    gt.String(t, v).Equal("blue")             // Pass
+})
+
+// Find and test matching element
+users := []User{{"Alice", 25}, {"Bob", 30}}
+gt.Array(t, users).MatchThen(
+    func(u User) bool { return u.Name == "Bob" },
+    func(t testing.TB, u User) {
+        gt.Number(t, u.Age).Equal(30)         // Pass
+    })
+
+// Sugar syntax
+gt.A(t, colors).Has("blue")                   // Same as gt.Array()
 ```
 
 ### Map
 
+Provides type-safe testing for maps with comprehensive key-value operations.
+
 ```go
 colorMap := map[string]int{
-    "red": 1,
+    "red":    1,
     "yellow": 2,
-    "blue": 5,
+    "blue":   5,
 }
 
-gt.Map(t, colorMap)
-    .HasKey("blue")           // Pass
-    .HasValue(5)              // Pass
-    // .HasValue("red")       // Compile error
-    .HasKeyValue("yellow", 2) // Pass
+// Basic equality and length
+gt.Map(t, colorMap).
+    Equal(map[string]int{"red": 1, "yellow": 2, "blue": 5}). // Pass
+    NotEqual(map[string]int{"red": 1, "yellow": 2}).         // Pass
+    Length(3)                                                // Pass
 
-gt.Map(t, colorMap).Required().HasKey("orange") // Fail and stop test
+// Key operations
+gt.Map(t, colorMap).
+    HasKey("blue").                           // Pass - key exists
+    NotHasKey("orange").                      // Pass - key doesn't exist
+    HasKey("purple")                          // Fail - key doesn't exist
+
+// Value operations
+gt.Map(t, colorMap).
+    HasValue(5).                              // Pass - value exists
+    NotHasValue(10).                          // Pass - value doesn't exist
+    HasValue(99)                              // Fail - value doesn't exist
+
+// Key-value pair operations
+gt.Map(t, colorMap).
+    HasKeyValue("yellow", 2).                 // Pass - pair exists
+    NotHasKeyValue("red", 5).                 // Pass - pair doesn't exist
+    HasKeyValue("blue", 1)                    // Fail - wrong value for key
+
+// Index-based operations (similar to accessing map[key])
+gt.Map(t, colorMap).
+    EqualAt("red", 1).                        // Pass - map["red"] == 1
+    NotEqualAt("blue", 1).                    // Pass - map["blue"] != 1
+    EqualAt("orange", 1)                      // Fail - key doesn't exist
+
+// Test individual values with callback
+gt.Map(t, colorMap).At("blue", func(t testing.TB, v int) {
+    gt.Number(t, v).Greater(3)                // Pass
+})
+
+// Sugar syntax
+gt.M(t, colorMap).HasKey("red")               // Same as gt.Map()
 ```
 
 ### Cast
@@ -203,6 +318,30 @@ gt.ErrorAs(t, err, func(e *MyCustomError) {
 })
 ```
 
+### ExpectError
+
+Helper function for conditional error testing based on expectations:
+
+```go
+// Expect an error to occur
+err := someFunctionThatShouldFail()
+gt.ExpectError(t, true, err)  // Pass if err != nil
+
+// Expect no error to occur
+err := someFunctionThatShouldSucceed()
+gt.ExpectError(t, false, err) // Pass if err == nil
+
+// Conditional error testing
+shouldFail := true
+err := conditionalFunction(shouldFail)
+gt.ExpectError(t, shouldFail, err) // Pass based on shouldFail expectation
+```
+
+This is particularly useful for:
+- Testing functions with conditional error behavior
+- Parameterized tests where error expectation varies
+- Reducing test code duplication when testing both success and failure cases
+
 ### File
 
 File system testing:
@@ -216,6 +355,116 @@ gt.File(t, "testdata/file.txt").
 
 gt.File(t, "nonexistent.txt").NotExists() // Check file doesn't exist
 ```
+
+## Required Pattern (Fail-Fast Testing)
+
+All test types support the `Required()` method which provides fail-fast behavior. When `Required()` is called, it checks if any previous test in the chain has failed. If so, it immediately stops the test execution using `t.FailNow()`, preventing subsequent tests from running.
+
+### Basic Usage
+
+```go
+// Test will stop immediately if the first assertion fails
+gt.Value(t, result).
+    Describe("Critical validation step").
+    Required().           // Stop here if previous test failed
+    Equal(expected).      // This won't run if Required() triggered
+    NotNil()              // This won't run either
+
+// Vs. normal testing - all assertions run even if some fail
+gt.Value(t, result).
+    Equal(expected).      // Fails but continues
+    NotNil()              // Still runs and might also fail
+```
+
+### Required with All Test Types
+
+Every test type supports `Required()` for fail-fast behavior:
+
+```go
+// Value tests
+gt.Value(t, user).Required().NotNil().Equal(expectedUser)
+
+// Array tests
+gt.Array(t, items).Required().Length(5).Has(expectedItem)
+
+// Map tests
+gt.Map(t, data).Required().HasKey("id").HasValue(123)
+
+// String tests
+gt.String(t, name).Required().IsNotEmpty().HasPrefix("user_")
+
+// Number tests
+gt.Number(t, count).Required().Greater(0).Less(100)
+
+// Bool tests
+gt.Bool(t, isValid).Required().True()
+
+// Error tests
+gt.NoError(t, err).Required() // Common pattern - stop if error occurs
+gt.Error(t, err).Required().Contains("validation failed")
+
+// File tests
+gt.File(t, "config.json").Required().Exists().String(func(t testing.TB, content string) {
+    gt.String(t, content).Contains("database")
+})
+```
+
+### Required with Descriptions
+
+`Required()` works seamlessly with `Describe()` and `Describef()` to provide meaningful error context:
+
+```go
+gt.Value(t, response).
+    Describef("API response for user %d should be valid", userID).
+    Required().           // Will show description if this fails
+    NotNil().
+    Equal(expectedResponse)
+
+// Error output:
+// API response for user 123 should be valid
+// Previous test failed
+```
+
+### Common Patterns
+
+```go
+// Pattern 1: Critical setup validation
+config := loadConfig()
+gt.Value(t, config).
+    Describe("Configuration must be loaded successfully").
+    Required().
+    NotNil()
+
+// Pattern 2: Function return value validation
+result, err := processData(input)
+gt.NoError(t, err).Required()  // Stop if error
+gt.Value(t, result).Required().NotNil().Equal(expected)
+
+// Pattern 3: Multi-step validation
+gt.Array(t, users).
+    Describe("User list validation").
+    Required().
+    Length(expectedCount).
+    All(func(u User) bool { return u.ID > 0 })
+
+// Pattern 4: Map validation with early exit
+gt.Map(t, apiResponse).
+    Describe("API response structure validation").
+    Required().
+    HasKey("status").
+    HasKey("data").
+    At("status", func(t testing.TB, status string) {
+        gt.String(t, status).Equal("success")
+    })
+```
+
+### When to Use Required
+
+- **Critical validations**: Use `Required()` when subsequent tests depend on the current assertion
+- **Setup validation**: Validate test prerequisites before running main test logic  
+- **Error handling**: Stop immediately when errors occur in functions that should succeed
+- **Complex test chains**: Prevent cascading failures in multi-step validations
+- **Resource validation**: Ensure files, connections, or configurations exist before using them
 
 ### Return Values
 
@@ -247,6 +496,7 @@ gt.Nil(t, (*int)(nil))
 gt.Nil(t, []int(nil))
 gt.NotNil(t, "not nil")
 ```
+
 
 ## License
 

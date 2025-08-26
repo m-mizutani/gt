@@ -1,6 +1,7 @@
 package gt_test
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/m-mizutani/gt"
@@ -94,4 +95,73 @@ func TestNotNil(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestExpectError(t *testing.T) {
+	testCases := []struct {
+		name       string
+		expected   bool
+		err        error
+		shouldFail bool
+	}{
+		{"expect error and got error", true, errors.New("test error"), false},
+		{"expect error but got no error", true, nil, true},
+		{"expect no error and got no error", false, nil, false},
+		{"expect no error but got error", false, errors.New("test error"), true},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			r := newRecorder()
+			gt.ExpectError(r, tc.expected, tc.err)
+
+			if tc.shouldFail && r.errs == 0 {
+				t.Errorf("expected test to fail, but it passed")
+			}
+			if !tc.shouldFail && r.errs > 0 {
+				var msg string
+				if len(r.msgs) > 0 {
+					msg = r.msgs[len(r.msgs)-1]
+				}
+				t.Errorf("expected test to pass, but it failed: %s", msg)
+			}
+		})
+	}
+}
+
+func TestExpectErrorMessages(t *testing.T) {
+	t.Run("expected error but got none", func(t *testing.T) {
+		r := newRecorder()
+		gt.ExpectError(r, true, nil)
+
+		if r.errs == 0 {
+			t.Error("expected test to fail")
+		}
+		expectedMsg := "expected error, but got no error"
+		if len(r.msgs) == 0 || r.msgs[len(r.msgs)-1] != expectedMsg {
+			var actualMsg string
+			if len(r.msgs) > 0 {
+				actualMsg = r.msgs[len(r.msgs)-1]
+			}
+			t.Errorf("expected message %q, got %q", expectedMsg, actualMsg)
+		}
+	})
+
+	t.Run("expected no error but got error", func(t *testing.T) {
+		r := newRecorder()
+		testErr := errors.New("test error")
+		gt.ExpectError(r, false, testErr)
+
+		if r.errs == 0 {
+			t.Error("expected test to fail")
+		}
+		expectedMsg := "expected no error, but got error: test error"
+		if len(r.msgs) == 0 || r.msgs[len(r.msgs)-1] != expectedMsg {
+			var actualMsg string
+			if len(r.msgs) > 0 {
+				actualMsg = r.msgs[len(r.msgs)-1]
+			}
+			t.Errorf("expected message %q, got %q", expectedMsg, actualMsg)
+		}
+	})
 }
