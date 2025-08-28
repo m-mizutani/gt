@@ -253,12 +253,12 @@ func TestFailure(t *testing.T) {
 		gt.Value(t, u1).Equal(&User{
 			ID:   "123",
 			Name: "orange",
-		})
+		}).Required()
 	})
 
 	t.Run("number", func(t *testing.T) {
 		v := 10
 
-		gt.Number(t, v).Greater(12)
+		gt.Number(t, v).Greater(12).Required()
 	})
 }

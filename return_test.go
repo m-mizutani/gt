@@ -14,7 +14,7 @@ func TestReturn(t *testing.T) {
 		doSomeRequest := func() (string, error) {
 			return "ok", nil
 		}
-		gt.V(r, gt.Return1(doSomeRequest()).NoError(r)).Equal("ok")
+		gt.V(r, gt.Return1(doSomeRequest()).NoError(r)).Equal("ok").Required()
 
 		if r.errs != 0 {
 			t.Error("should not fail")
@@ -27,7 +27,7 @@ func TestReturn(t *testing.T) {
 		doSomeRequest := func() (string, error) {
 			return "ng", errors.New("test")
 		}
-		gt.Return1(doSomeRequest()).Error(r)
+		gt.Return1(doSomeRequest()).Error(r).Required()
 
 		if r.errs != 0 {
 			t.Error("should not fail")
@@ -44,10 +44,10 @@ func TestReturn(t *testing.T) {
 		}
 
 		// Check if getting no error and will get value
-		gt.Value(t, gt.Return1(goodFunc()).NoError(t)).Equal("ok")
+		gt.Value(t, gt.Return1(goodFunc()).NoError(t)).Equal("ok").Required()
 
 		// Check if getting error
-		gt.Return1(badFunc()).Error(t)
+		gt.Return1(badFunc()).Error(t).Required()
 
 	})
 }

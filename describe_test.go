@@ -56,12 +56,12 @@ func TestMethodChaining_WithDescribe(t *testing.T) {
 // Test that successful operations don't cause issues
 func TestSuccessfulOperations_WithDescribe(t *testing.T) {
 	// These should all pass without any errors
-	gt.Value(t, 42).Describe("Number test").Equal(42)
-	gt.Array(t, []int{1, 2, 3}).Describef("Array of %d elements", 3).Length(3)
+	gt.Value(t, 42).Describe("Number test").Equal(42).Required()
+	gt.Array(t, []int{1, 2, 3}).Describef("Array of %d elements", 3).Length(3).Required()
 
 	// Test with different types
-	gt.Value(t, "hello").Describe("String test").Equal("hello")
-	gt.Value(t, true).Describef("Boolean test: %v", true).Equal(true)
+	gt.Value(t, "hello").Describe("String test").Equal("hello").Required()
+	gt.Value(t, true).Describef("Boolean test: %v", true).Equal(true).Required()
 }
 
 // Test Required method chaining with Describe
