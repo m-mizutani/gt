@@ -115,6 +115,39 @@ func (x StringTest) NotContains(sub string) StringTest {
 	return x
 }
 
+// ContainsAny checks if actual contains any of the expected substrings.
+// The test passes if actual contains at least one of the provided substrings.
+func (x StringTest) ContainsAny(substrs ...string) StringTest {
+	x.t.Helper()
+
+	for _, sub := range substrs {
+		if strings.Contains(x.actual, sub) {
+			return x
+		}
+	}
+
+	msg := fmt.Sprintf("value should contain any of %+v, but got: %+v", substrs, x.actual)
+	x.t.Error(formatErrorMessage(x.description, msg))
+
+	return x
+}
+
+// ContainsNone checks if actual contains none of the expected substrings.
+// The test passes if actual does not contain any of the provided substrings.
+func (x StringTest) ContainsNone(substrs ...string) StringTest {
+	x.t.Helper()
+
+	for _, sub := range substrs {
+		if strings.Contains(x.actual, sub) {
+			msg := fmt.Sprintf("value should not contain any of %+v, but contains %+v in: %+v", substrs, sub, x.actual)
+			x.t.Error(formatErrorMessage(x.description, msg))
+			return x
+		}
+	}
+
+	return x
+}
+
 // HasPrefix check if actual has prefix expected.
 func (x StringTest) HasPrefix(prefix string) StringTest {
 	x.t.Helper()

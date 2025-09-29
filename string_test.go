@@ -52,4 +52,15 @@ func TestString(t *testing.T) {
 	t.Run("Match", func(t *testing.T) {
 		gt.S(t, "hello, world").Match("^hello.*")
 	})
+
+	t.Run("ContainsAny", func(t *testing.T) {
+		gt.S(t, "hello, world").ContainsAny("hello", "goodbye")
+		gt.S(t, "hello, world").ContainsAny("goodbye", "world")
+		gt.S(t, "hello, world").ContainsAny("foo", "bar", "hello")
+	})
+
+	t.Run("ContainsNone", func(t *testing.T) {
+		gt.S(t, "hello, world").ContainsNone("foo", "bar")
+		gt.S(t, "hello, world").ContainsNone("goodbye", "farewell")
+	})
 }
