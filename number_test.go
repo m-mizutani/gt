@@ -18,6 +18,7 @@ func TestNumberTest(t *testing.T) {
 	numberTest[uint16](t)
 	numberTest[uint32](t)
 	numberTest[uint64](t)
+	numberTest[uintptr](t)
 	numberTest[float32](t)
 	numberTest[float64](t)
 }
@@ -26,7 +27,7 @@ type number interface {
 	int | uint |
 		int8 | int16 | int32 | int64 |
 		uint8 | uint16 | uint32 | uint64 |
-		float32 | float64
+		float32 | float64 | uintptr
 }
 
 func numberTest[T number](t *testing.T) {
