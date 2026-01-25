@@ -140,6 +140,10 @@ Benefits:
 - Full IDE autocompletion
 - Better error messages
 
+## For AI Coding Assistants
+
+If you use AI coding assistants (Claude Code, GitHub Copilot, etc.) in your project, see [examples/claude-md/CLAUDE.md](examples/claude-md/CLAUDE.md) for a template to add to your project's CLAUDE.md. This helps AI assistants use gt correctly.
+
 ## License
 
 Apache License 2.0
