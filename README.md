@@ -43,6 +43,8 @@ func TestExample(t *testing.T) {
 }
 ```
 
+See [examples/basic](examples/basic) for a complete runnable example.
+
 ## Available Types
 
 | Type | Constructor | Use for |
