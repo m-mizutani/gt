@@ -41,6 +41,17 @@ When making changes, before finishing the task, always:
 - **For GraphQL changes: Run `task graphql` and verify no compilation errors**
 - **For GraphQL changes: Check frontend GraphQL queries are updated accordingly**
 
+### Documentation
+
+- **When adding or modifying features, always update the documentation in `docs/` directory**
+- Documentation includes:
+  - `docs/types/*.md` - Type-specific documentation (update when adding/changing methods)
+  - `docs/patterns/*.md` - Pattern documentation (update when adding new patterns)
+  - `docs/getting-started.md` - Quick start guide (update for significant API changes)
+  - `docs/README.md` - Index page (update when adding new types or major features)
+- Keep documentation in sync with code changes
+- Documentation is written in English
+
 ### Language
 
 All comment and character literal in source code must be in English

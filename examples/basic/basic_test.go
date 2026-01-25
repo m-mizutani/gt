@@ -45,7 +45,10 @@ func TestArrayOperations(t *testing.T) {
 
 	gt.Array(t, users).
 		Length(3).
-		All(func(u struct{ Name string; Active bool }) bool {
+		All(func(u struct {
+			Name   string
+			Active bool
+		}) bool {
 			return u.Name != ""
 		})
 }
