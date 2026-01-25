@@ -371,3 +371,72 @@ func (x ArrayTest[T]) MatchThen(match func(v T) bool, then func(t testing.TB, v 
 	x.t.Error(formatErrorMessage(x.description, msg))
 	return x
 }
+
+func (x ArrayTest[T]) unorderedEqual(expect []T) (matched bool, missing, extra []T) {
+	if len(x.actual) == 0 && len(expect) == 0 {
+		return true, nil, nil
+	}
+
+	// Track which elements in expect have been matched
+	used := make([]bool, len(expect))
+
+	// Find extra elements (in actual but not in expect)
+	for i := range x.actual {
+		found := false
+		for j := range expect {
+			if !used[j] && EvalCompare(x.actual[i], expect[j]) {
+				used[j] = true
+				found = true
+				break
+			}
+		}
+		if !found {
+			extra = append(extra, x.actual[i])
+		}
+	}
+
+	// Find missing elements (in expect but not matched)
+	for j := range expect {
+		if !used[j] {
+			missing = append(missing, expect[j])
+		}
+	}
+
+	matched = len(missing) == 0 && len(extra) == 0
+	return
+}
+
+// UnorderedEqual checks if actual and expect have the same elements regardless of order.
+// It considers duplicate elements (e.g., [1,1,2] matches [2,1,1] but not [1,2,2]).
+//
+//	v := []int{1, 2, 3}
+//	gt.Array(t, v).UnorderedEqual([]int{3, 1, 2}) // Pass
+//	gt.Array(t, v).UnorderedEqual([]int{1, 2, 4}) // Fail
+func (x ArrayTest[T]) UnorderedEqual(expect []T) ArrayTest[T] {
+	x.t.Helper()
+
+	matched, missing, extra := x.unorderedEqual(expect)
+	if !matched {
+		msg := fmt.Sprintf("elements do not match (unordered)\n  missing: %+v\n  extra:   %+v\n  actual:  %+v\n  expect:  %+v", missing, extra, x.actual, expect)
+		x.t.Error(formatErrorMessage(x.description, msg))
+	}
+
+	return x
+}
+
+// NotUnorderedEqual checks if actual and expect do not have the same elements regardless of order.
+//
+//	v := []int{1, 2, 3}
+//	gt.Array(t, v).NotUnorderedEqual([]int{1, 2, 4}) // Pass
+//	gt.Array(t, v).NotUnorderedEqual([]int{3, 1, 2}) // Fail
+func (x ArrayTest[T]) NotUnorderedEqual(expect []T) ArrayTest[T] {
+	x.t.Helper()
+
+	matched, _, _ := x.unorderedEqual(expect)
+	if matched {
+		msg := fmt.Sprintf("elements should not match (unordered), but they do\n  actual: %+v\n  expect: %+v", x.actual, expect)
+		x.t.Error(formatErrorMessage(x.description, msg))
+	}
+
+	return x
+}
