@@ -301,6 +301,70 @@ func TestArray(t *testing.T) {
 				pass: true,
 			},
 		},
+		"UnorderedEqual": {
+			"pass (same order)": {
+				test: func(arr gt.ArrayTest[string]) {
+					arr.UnorderedEqual([]string{"blue", "orange", "red"})
+				},
+				pass: true,
+			},
+			"pass (different order)": {
+				test: func(arr gt.ArrayTest[string]) {
+					arr.UnorderedEqual([]string{"red", "blue", "orange"})
+				},
+				pass: true,
+			},
+			"fail (missing element)": {
+				test: func(arr gt.ArrayTest[string]) {
+					arr.UnorderedEqual([]string{"blue", "orange"})
+				},
+				pass: false,
+			},
+			"fail (extra element)": {
+				test: func(arr gt.ArrayTest[string]) {
+					arr.UnorderedEqual([]string{"blue", "orange", "red", "yellow"})
+				},
+				pass: false,
+			},
+			"fail (different element)": {
+				test: func(arr gt.ArrayTest[string]) {
+					arr.UnorderedEqual([]string{"blue", "orange", "yellow"})
+				},
+				pass: false,
+			},
+			"fail with nil": {
+				test: func(arr gt.ArrayTest[string]) {
+					arr.UnorderedEqual(nil)
+				},
+				pass: false,
+			},
+		},
+		"NotUnorderedEqual": {
+			"pass (different element)": {
+				test: func(arr gt.ArrayTest[string]) {
+					arr.NotUnorderedEqual([]string{"blue", "orange", "yellow"})
+				},
+				pass: true,
+			},
+			"pass (missing element)": {
+				test: func(arr gt.ArrayTest[string]) {
+					arr.NotUnorderedEqual([]string{"blue", "orange"})
+				},
+				pass: true,
+			},
+			"fail (same elements, same order)": {
+				test: func(arr gt.ArrayTest[string]) {
+					arr.NotUnorderedEqual([]string{"blue", "orange", "red"})
+				},
+				pass: false,
+			},
+			"fail (same elements, different order)": {
+				test: func(arr gt.ArrayTest[string]) {
+					arr.NotUnorderedEqual([]string{"red", "blue", "orange"})
+				},
+				pass: false,
+			},
+		},
 	}
 
 	for feature, cases := range testCases {
@@ -386,6 +450,55 @@ func TestArrayExample2(t *testing.T) {
 			Name: "TestUser",
 		}).
 		Length(3)
+}
+
+func TestUnorderedEqualWithDuplicates(t *testing.T) {
+	t.Run("pass with duplicates in different order", func(t *testing.T) {
+		target := []int{1, 1, 2}
+		r := newRecorder()
+		gt.Array(r, target).UnorderedEqual([]int{2, 1, 1})
+		if r.errs != 0 {
+			t.Errorf("expected pass, but got error")
+		}
+	})
+
+	t.Run("fail with different duplicate count", func(t *testing.T) {
+		target := []int{1, 1, 2}
+		r := newRecorder()
+		gt.Array(r, target).UnorderedEqual([]int{1, 2, 2})
+		if r.errs == 0 {
+			t.Errorf("expected error, but got pass")
+		}
+	})
+}
+
+func TestUnorderedEqualWithEmptyArrays(t *testing.T) {
+	t.Run("pass with both empty", func(t *testing.T) {
+		target := []string{}
+		r := newRecorder()
+		gt.Array(r, target).UnorderedEqual([]string{})
+		if r.errs != 0 {
+			t.Errorf("expected pass, but got error")
+		}
+	})
+
+	t.Run("fail with actual empty", func(t *testing.T) {
+		target := []string{}
+		r := newRecorder()
+		gt.Array(r, target).UnorderedEqual([]string{"blue"})
+		if r.errs == 0 {
+			t.Errorf("expected error, but got pass")
+		}
+	})
+
+	t.Run("fail with expect empty", func(t *testing.T) {
+		target := []string{"blue"}
+		r := newRecorder()
+		gt.Array(r, target).UnorderedEqual([]string{})
+		if r.errs == 0 {
+			t.Errorf("expected error, but got pass")
+		}
+	})
 }
 
 func TestMatchThen(t *testing.T) {
