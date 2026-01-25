@@ -1,20 +1,19 @@
-# CLAUDE.md Example for Projects Using gt
-
-Copy and adapt this section to your project's CLAUDE.md.
-
+---
+paths:
+  - "**/*_test.go"
 ---
 
-## Testing with gt
+# gt Test Library Rules
 
 This project uses [gt](https://github.com/m-mizutani/gt) for type-safe test assertions.
 
-### Rules
+## Rules
 
 1. **Always use specialized types** - Don't use `gt.Value` or `gt.Bool` when a specialized type exists
 2. **Use `Required()` for critical checks** - Stop test early if prerequisite fails
 3. **Add descriptions for complex assertions** - Use `Describef()` for context
 
-### Type Selection
+## Type Selection
 
 | Data Type | Use | NOT |
 |-----------|-----|-----|
@@ -25,9 +24,7 @@ This project uses [gt](https://github.com/m-mizutani/gt) for type-safe test asse
 | `map[K]V` | `gt.Map(t, m).HasKey("k")` | manual check with `gt.Bool` |
 | `bool` | `gt.Bool(t, b).True()` | `gt.Value(t, b).Equal(true)` |
 
-### Quick Reference
-
-All types support: `Describe(string)`, `Describef(format, args...)`, `Required()`
+## Available Methods
 
 **Value** - `gt.Value(t, v)` / `gt.V(t, v)`
 - `Equal(T)`, `NotEqual(T)`, `Nil()`, `NotNil()`, `In(...T)`
@@ -62,9 +59,9 @@ All types support: `Describe(string)`, `Describef(format, args...)`, `Required()
 **Bool** - `gt.Bool(t, b)` / `gt.B(t, b)`
 - `True()`, `False()`
 
-**Error** - `gt.Error(t, err)` / `gt.NoError(t, err)`
+**Error**
 - `gt.Error(t, err)` - expects error (fails if nil)
-- `gt.NoError(t, err)` - expects no error (fails if not nil)
+- `gt.NoError(t, err)` - expects no error
 - `gt.ErrorAs[T](t, err, callback)` - type assertion
 - `.Is(error)`, `.IsNot(error)`, `.Contains(string)`
 
@@ -79,7 +76,7 @@ All types support: `Describe(string)`, `Describef(format, args...)`, `Required()
 - `.NoError(t)` - returns value(s) if no error
 - `.Error(t)` - returns ErrorTest if error expected
 
-### Common Patterns
+## Common Patterns
 
 ```go
 // Error handling with fail-fast

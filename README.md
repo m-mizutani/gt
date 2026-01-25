@@ -142,7 +142,9 @@ Benefits:
 
 ## For AI Coding Assistants
 
-If you use AI coding assistants (Claude Code, GitHub Copilot, etc.) in your project, see [examples/claude-md/CLAUDE.md](examples/claude-md/CLAUDE.md) for a template to add to your project's CLAUDE.md. This helps AI assistants use gt correctly.
+If you use Claude Code, copy [examples/claude-rules/test-gt.md](examples/claude-rules/test-gt.md) to your project's `.claude/rules/` directory. This rule automatically applies when Claude works with test files and helps it use gt correctly.
+
+See [examples/claude-rules/README.md](examples/claude-rules/README.md) for setup instructions.
 
 ## License
 
