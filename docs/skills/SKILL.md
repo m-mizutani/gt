@@ -1,19 +1,25 @@
 ---
 name: test-with-gt
-description: Write Go test code using the gt library. Use when writing tests, creating test files, or when the user asks to add tests for Go code.
+description: "Write Go tests using the gt library for type-safe, generic assertions with compile-time checking. Covers choosing typed wrappers (Array, Map, Number, String, Error), fail-fast with Required(), method chaining, and return-value helpers (R1/R2/R3). Use when writing tests, creating test files, adding assertions, or when the user asks to test Go code with gt instead of the standard testing package."
 allowed-tools: Read, Bash(go:*)
 ---
 
 # Writing Tests with gt
 
-When writing Go test code, use the `gt` library for type-safe assertions.
+When writing Go test code, use the `gt` library for type-safe assertions instead of the standard `testing` package assertions.
 
 ## Step 1: Locate gt documentation
 
-First, find where gt is installed and read its documentation:
+Find where gt is installed and read its documentation:
 
 ```bash
 GT_DIR=$(go list -m -f '{{.Dir}}' github.com/m-mizutani/gt 2>/dev/null)
+```
+
+If gt is not yet installed, add it first:
+
+```bash
+go get github.com/m-mizutani/gt
 ```
 
 If gt is available, read the relevant documentation from `$GT_DIR/docs/`:
@@ -55,6 +61,14 @@ gt.Array(t, users).
 ```go
 result := gt.R1(parseJSON(input)).NoError(t)
 gt.String(t, result.Name).Equal("Alice")
+```
+
+## Step 4: Run and verify tests
+
+After writing tests, run them to confirm they pass:
+
+```bash
+go test -v ./... -run TestName
 ```
 
 ## Quick Reference
