@@ -59,6 +59,6 @@ gt.String(t, result.Name).Equal("Alice")
 
 ## Quick Reference
 
-**Constructors**: `gt.Value`, `gt.Array`, `gt.Map`, `gt.Number`, `gt.String`, `gt.Bool`, `gt.Error`, `gt.NoError`, `gt.File`, `gt.Cast`, `gt.R1/R2/R3`
+**Constructors**: `gt.Value`, `gt.Array`, `gt.Map`, `gt.Number`, `gt.String`, `gt.Bool`, `gt.Error`, `gt.NoError`, `gt.Time`, `gt.File`, `gt.Cast`, `gt.R1/R2/R3`
 
 **Short aliases**: `gt.V`, `gt.A`, `gt.M`, `gt.N`, `gt.S`, `gt.B`, `gt.F`, `gt.C`

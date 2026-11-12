@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strings"
 	"testing"
+
+	"github.com/m-mizutani/goerr/v2"
 )
 
 type ErrorTest struct {
@@ -46,7 +48,7 @@ func (x ErrorTest) Required() ErrorTest {
 func (x ErrorTest) Is(expected error) {
 	x.t.Helper()
 	if x.actual != nil && !errors.Is(x.actual, expected) {
-		msg := fmt.Sprintf("expected %T, but not got from %T", expected, x.actual)
+		msg := fmt.Sprintf("expected error is %q (%T), but got: %+v", expected, expected, x.actual)
 		x.t.Error(formatErrorMessage(x.description, msg))
 	}
 }
@@ -55,9 +57,41 @@ func (x ErrorTest) Is(expected error) {
 func (x ErrorTest) IsNot(expected error) {
 	x.t.Helper()
 	if x.actual != nil && errors.Is(x.actual, expected) {
-		msg := fmt.Sprintf("not expected %T, but got from %T", expected, x.actual)
+		msg := fmt.Sprintf("expected error is not %q (%T), but got: %+v", expected, expected, x.actual)
 		x.t.Error(formatErrorMessage(x.description, msg))
 	}
+}
+
+// HasTag checks that the error carries the goerr tag, by goerr.HasTag(). A tag is given as a
+// fmt.Stringer because goerr does not export its tag type; a value returned by goerr.NewTag
+// satisfies it. It does nothing for a nil error, which gt.Error has already reported.
+//
+//	var TagNotFound = goerr.NewTag("not_found")
+//	gt.Error(t, err).HasTag(TagNotFound)
+func (x ErrorTest) HasTag(tag fmt.Stringer) {
+	x.t.Helper()
+	if x.actual != nil && !hasTag(x.actual, tag) {
+		msg := fmt.Sprintf("expected error has tag %q, but tags are %v: %+v", tag.String(), goerr.Tags(x.actual), x.actual)
+		x.t.Error(formatErrorMessage(x.description, msg))
+	}
+}
+
+// NotHasTag checks that the error does not carry the goerr tag, by goerr.HasTag(). It does
+// nothing for a nil error, which gt.Error has already reported.
+//
+//	gt.Error(t, err).NotHasTag(TagNotFound)
+func (x ErrorTest) NotHasTag(tag fmt.Stringer) {
+	x.t.Helper()
+	if x.actual != nil && hasTag(x.actual, tag) {
+		msg := fmt.Sprintf("expected error does not have tag %q, but got: %+v", tag.String(), x.actual)
+		x.t.Error(formatErrorMessage(x.description, msg))
+	}
+}
+
+// hasTag rebuilds the tag from its string: goerr keys tags by value, so a tag made from the
+// same string is the same tag.
+func hasTag(err error, tag fmt.Stringer) bool {
+	return goerr.HasTag(err, goerr.NewTag(tag.String()))
 }
 
 // ErrorAs checks error type by errors.As() function. If type check passed, callback will be invoked and given extracted error by errors.As.

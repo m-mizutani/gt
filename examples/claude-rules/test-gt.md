@@ -64,6 +64,10 @@ This project uses [gt](https://github.com/m-mizutani/gt) for type-safe test asse
 - `gt.NoError(t, err)` - expects no error
 - `gt.ErrorAs[T](t, err, callback)` - type assertion
 - `.Is(error)`, `.IsNot(error)`, `.Contains(string)`
+- `.HasTag(tag)`, `.NotHasTag(tag)` - goerr tag (pass the value from `goerr.NewTag`)
+
+**Time** - `gt.Time(t, tm)`
+- `Near(expect, tolerance)` - within tolerance of expect, earlier or later
 
 **File** - `gt.File(t, path)` / `gt.F(t, path)`
 - `Exists()`, `NotExists()`
