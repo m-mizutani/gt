@@ -56,6 +56,7 @@ See [examples/basic](examples/basic) for a complete runnable example.
 | **String** | `gt.String(t, s)` | String operations |
 | **Bool** | `gt.Bool(t, b)` | Boolean checks |
 | **Error** | `gt.Error(t, err)` | Error validation |
+| **Time** | `gt.Time(t, tm)` | Time proximity checks |
 | **File** | `gt.File(t, path)` | File system checks |
 
 Each type has a short alias: `gt.V()`, `gt.A()`, `gt.M()`, `gt.N()`, `gt.S()`, `gt.B()`, `gt.F()`

@@ -34,6 +34,8 @@ Checks the error type using `errors.As` and executes the callback if matched.
 |--------|-------------|
 | `Is(expected error)` | Verify error matches using `errors.Is` |
 | `IsNot(expected error)` | Verify error does not match using `errors.Is` |
+| `HasTag(tag fmt.Stringer)` | Verify error carries a [goerr](https://github.com/m-mizutani/goerr) tag using `goerr.HasTag` |
+| `NotHasTag(tag fmt.Stringer)` | Verify error does not carry a goerr tag using `goerr.HasTag` |
 | `Contains(substr string)` | Verify error message contains substring |
 | `Required()` | Stop immediately if previous test failed |
 | `Describe(string)` | Set test description |
@@ -107,6 +109,38 @@ func TestErrorIsNot(t *testing.T) {
     gt.Error(t, err).IsNot(ErrPermissionDenied)
 }
 ```
+
+When `Is` or `IsNot` fails, the message shows the expected error and the whole actual error (formatted with `%+v`, so values and the stack trace attached by goerr are included), not only their types:
+
+```
+expected error is "not found" (*errors.errorString), but got: permission denied
+```
+
+### Check for an Error Tag
+
+Errors built with [goerr](https://github.com/m-mizutani/goerr) can carry tags. `HasTag` and `NotHasTag` check them through `goerr.HasTag`, so a tag on a wrapped error or on an error joined by `goerr.Join` is found too.
+
+```go
+var (
+    TagNotFound = goerr.NewTag("not_found")
+    TagInternal = goerr.NewTag("internal")
+)
+
+func TestErrorHasTag(t *testing.T) {
+    err := findUser("unknown") // goerr.New("no such user", goerr.T(TagNotFound))
+
+    gt.Error(t, err).HasTag(TagNotFound)
+    gt.Error(t, err).NotHasTag(TagInternal)
+}
+```
+
+The tag is taken as a `fmt.Stringer` because goerr does not export its tag type; pass the value `goerr.NewTag` returned. A failure shows the expected tag, the tags the error has and the error itself:
+
+```
+expected error has tag "not_found", but tags are [internal]: database is down
+```
+
+Like `Is`, both do nothing more for a `nil` error: `gt.Error` has already reported it.
 
 ### Check Error Type
 

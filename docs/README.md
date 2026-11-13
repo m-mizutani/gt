@@ -21,6 +21,7 @@ Detailed usage and method reference for each test type.
 | **String** | String testing | [string.md](./types/string.md) |
 | **Bool** | Boolean testing | [bool.md](./types/bool.md) |
 | **Error** | Error testing | [error.md](./types/error.md) |
+| **Time** | Time proximity testing | [time.md](./types/time.md) |
 | **File** | File testing | [file.md](./types/file.md) |
 | **Cast** | Type assertion | [cast.md](./types/cast.md) |
 | **Return** | Function return testing | [return.md](./types/return.md) |
